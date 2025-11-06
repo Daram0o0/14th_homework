@@ -1,4 +1,5 @@
 'use client'
+import { Button, Input } from '@commons/ui'
 import { useRegister } from './hook'
 import styles from './styles.module.css'
 export default function RegisterForm() {
@@ -12,64 +13,53 @@ export default function RegisterForm() {
           <p>회원가입을 위해 아래 빈칸을 모두 채워 주세요.</p>
           <div className={styles.inputWrapper}>
             {/* 이메일 */}
-            <div className={`${styles.inputBlock} ${errors.email ? styles.error : ''}`}>
-              <label htmlFor="email">
-                이메일 <span>*</span>
-              </label>
-              <input
-                type="text"
-                placeholder="이메일을 입력해 주세요"
-                onChange={handleChange}
-                id="email"
-                value={registerValue.email}
-              />
-              {errors.email && <p>{errors.email}</p>}
-            </div>
-            {/* 이름 */}
-            <div className={`${styles.inputBlock} ${errors.name ? styles.error : ''}`}>
-              <label htmlFor="name">
-                이름 <span>*</span>
-              </label>
-              <input
-                type="text"
-                placeholder="이름을 입력해 주세요"
-                onChange={handleChange}
-                id="name"
-                value={registerValue.name}
-              />
-              {errors.name && <p>{errors.name}</p>}
-            </div>
-            {/* 비밀번호 */}
-            <div className={`${styles.inputBlock} ${errors.password ? styles.error : ''}`}>
-              <label htmlFor="password">
-                비밀번호 <span>*</span>
-              </label>
-              <input
-                type="password"
-                placeholder="비밀번호를 입력해 주세요"
-                onChange={handleChange}
-                id="password"
-                value={registerValue.password}
-              />
-              {errors.password && <p>{errors.password}</p>}
-            </div>
+            {/* <div className={`${styles.inputBlock} ${errors.email ? styles.error : ''}`}> */}
+            <Input
+              label="이메일"
+              required={true}
+              placeholder="이메일을 입력해 주세요"
+              onChange={handleChange}
+              id="email"
+              value={registerValue.email}
+              errorMessage={errors.email}
+              status={errors.email ? 'error' : 'enabled'}
+            />
+
+            <Input
+              label="이름"
+              required={true}
+              placeholder="이름을 입력해 주세요"
+              onChange={handleChange}
+              id="name"
+              value={registerValue.name}
+              errorMessage={errors.name}
+              status={errors.name ? 'error' : 'enabled'}
+            />
+
+            <Input
+              label="비밀번호"
+              required={true}
+              placeholder="비밀번호를 입력해 주세요"
+              onChange={handleChange}
+              id="password"
+              value={registerValue.password}
+              errorMessage={errors.password}
+              status={errors.password ? 'error' : 'enabled'}
+            />
             {/* 비밀번호 확인*/}
-            <div className={`${styles.inputBlock} ${errors.passwordConfirm ? styles.error : ''}`}>
-              <label htmlFor="passwordConfirm">
-                비밀번호 확인 <span>*</span>
-              </label>
-              <input
-                type="password"
-                placeholder="비밀번호를 한 번 더 입력해 주세요"
-                onChange={handleChange}
-                id="passwordConfirm"
-                value={registerValue.passwordConfirm}
-              />
-              {errors.passwordConfirm && <p>{errors.passwordConfirm}</p>}
-            </div>
+            <Input
+              label="비밀번호 확인"
+              required={true}
+              placeholder="비밀번호를 한 번 더 입력해 주세요"
+              onChange={handleChange}
+              id="passwordConfirm"
+              value={registerValue.passwordConfirm}
+              errorMessage={errors.passwordConfirm}
+              status={errors.passwordConfirm ? 'error' : 'enabled'}
+            />
           </div>
         </div>
-        <button type="submit">회원가입</button>
+        <Button type="submit">회원가입</Button>
       </form>
       <SuccessModal />
     </>

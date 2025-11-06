@@ -20,11 +20,18 @@ const initialState = {
   passwordConfirm: '',
 }
 
+type RegisterErrors = {
+  email?: string
+  name?: string
+  password?: string
+  passwordConfirm?: string
+}
+
 export const useRegister = () => {
   const router = useRouter()
   const [registerValue, setRegisterValue] = useState(initialState)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState<RegisterErrors>({})
 
   const [createUser] = useMutation<CreateUserMutation, CreateUserMutationVariables>(
     CreateUserDocument
@@ -38,7 +45,7 @@ export const useRegister = () => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    const nextErrors = registerValidation(registerValue)
+    const nextErrors = registerValidation(registerValue) as RegisterErrors
     setErrors(nextErrors)
     if (!isEmptyObj(nextErrors)) return
 
@@ -95,5 +102,17 @@ export const useRegister = () => {
     </Modal>
   )
 
-  return { errors, registerValue, handleChange, handleSubmit, SuccessModal }
+  return { 
+    errors, 
+    registerValue, 
+    handleChange, 
+    handleSubmit, 
+    SuccessModal 
+  } as {
+    errors: RegisterErrors
+    registerValue: typeof initialState
+    handleChange: (event: ChangeEvent<HTMLInputElement>) => void
+    handleSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>
+    SuccessModal: () => JSX.Element
+  }
 }

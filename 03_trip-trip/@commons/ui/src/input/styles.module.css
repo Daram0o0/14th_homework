@@ -1,0 +1,290 @@
+/* Container */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Size variants for container */
+.size-s {
+  width: 320px;
+}
+
+.size-m {
+  width: 100%;
+  max-width: 1280px;
+}
+
+/* Label Area */
+.labelArea {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+}
+
+.label {
+  color: #333333;
+  font-family: var(--font-family-korean);
+}
+
+/* Size-specific label styles */
+.size-s .label {
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: var(--font-weight-regular);
+}
+
+.size-m .label {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: var(--font-weight-medium);
+}
+
+.required {
+  color: #f66a6a;
+  font-family: var(--font-family-korean);
+  font-weight: var(--font-weight-medium);
+  font-size: 16px;
+  line-height: 24px;
+}
+
+/* Input Area */
+.inputArea {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+/* Input Wrapper */
+.inputWrapper {
+  flex: 1;
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #d4d3d3;
+  border-radius: 8px;
+  transition: border-color 0.2s ease;
+}
+
+/* Size variants for input wrapper */
+.size-s .inputWrapper {
+  height: 40px;
+}
+
+.size-m .inputWrapper {
+  height: 48px;
+}
+
+/* Input */
+.input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-family-korean);
+  color: #000000;
+  box-sizing: border-box;
+}
+
+/* Size-specific input styles */
+.size-s .input {
+  padding: 10px 16px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: var(--font-weight-regular);
+}
+
+.size-m .input {
+  padding: 12px 16px;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: var(--font-weight-regular);
+}
+
+/* Input placeholder */
+.input::placeholder {
+  color: #ababab;
+  font-weight: var(--font-weight-regular);
+}
+
+/* Status variants */
+
+/* Enabled state (default) */
+.status-enabled {
+  border-color: #d4d3d3;
+}
+
+.status-enabled:hover {
+  border-color: #c7c7c7;
+}
+
+.status-enabled:focus-within {
+  border-color: #777777;
+}
+
+/* Filled state */
+.status-filled {
+  border-color: #d4d3d3;
+}
+
+.status-filled .input {
+  font-weight: var(--font-weight-medium);
+  color: #000000;
+}
+
+.size-s .status-filled .input {
+  font-weight: var(--font-weight-medium);
+}
+
+.size-m .status-filled .input {
+  font-weight: var(--font-weight-regular);
+}
+
+/* Selected & Typing state */
+.status-selected\&typing {
+  border-color: #777777;
+}
+
+.status-selected\&typing .input {
+  font-weight: var(--font-weight-medium);
+  color: #000000;
+}
+
+.size-s .status-selected\&typing .input {
+  font-weight: var(--font-weight-medium);
+}
+
+.size-m .status-selected\&typing .input {
+  font-weight: var(--font-weight-regular);
+}
+
+/* Error state */
+.status-error {
+  border-color: #f66a6a;
+}
+
+.status-error .input {
+  font-weight: var(--font-weight-medium);
+  color: #000000;
+}
+
+.size-s .status-error .input {
+  font-weight: var(--font-weight-medium);
+}
+
+.size-m .status-error .input {
+  font-weight: var(--font-weight-regular);
+}
+
+/* Disabled state */
+.status-disabled {
+  border-color: #d4d3d3;
+  background: #f2f2f2;
+  cursor: not-allowed;
+}
+
+.status-disabled .input {
+  color: #ababab;
+  cursor: not-allowed;
+}
+
+/* Read-only state */
+.status-read-only {
+  border-color: #d4d3d3;
+  background: #f2f2f2;
+}
+
+.status-read-only .input {
+  color: #777777;
+  cursor: default;
+}
+
+/* Button */
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 8px;
+  font-family: var(--font-family-korean);
+  font-weight: var(--font-weight-semibold);
+  color: #000000;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.button:hover {
+  background: #f2f2f2;
+}
+
+.button:active {
+  background: #e4e4e4;
+}
+
+.button:disabled {
+  background: #e4e4e4;
+  border-color: #d4d3d3;
+  color: #ababab;
+  cursor: not-allowed;
+}
+
+/* Size-specific button styles */
+.button-s {
+  height: 40px;
+  padding: 10px 16px;
+  font-size: 14px;
+  line-height: 20px;
+  min-width: 119px;
+}
+
+.button-m {
+  height: 48px;
+  padding: 12px 16px;
+  font-size: 18px;
+  line-height: 24px;
+  min-width: 136px;
+}
+
+/* Error Message */
+.errorMessage {
+  color: #f66a6a;
+  font-family: var(--font-family-korean);
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: var(--font-weight-regular);
+  margin-top: 8px;
+}
+
+/* Filled state modifier */
+.filled .input {
+  font-weight: var(--font-weight-medium);
+}
+
+.size-s .filled .input {
+  font-weight: var(--font-weight-medium);
+}
+
+.size-m .filled .input {
+  font-weight: var(--font-weight-regular);
+}
+
+/* Error state modifier */
+.error {
+  border-color: #f66a6a !important;
+}
+
+/* Focus states */
+.inputWrapper:focus-within {
+  border-color: #777777;
+}
+
+.status-error:focus-within {
+  border-color: #f66a6a;
+}
+
+.status-disabled:focus-within {
+  border-color: #d4d3d3;
+}

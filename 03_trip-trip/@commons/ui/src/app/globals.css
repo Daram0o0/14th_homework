@@ -5,6 +5,111 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Gray color palette */
+  --color-gray-w: #ffffff;
+  --color-gray-50: #f2f2f2;
+  --color-gray-100: #e4e4e4;
+  --color-gray-200: #d4d3d3;
+  --color-gray-300: #c7c7c7;
+  --color-gray-400: #ababab;
+  --color-gray-500: #919191;
+  --color-gray-600: #777777;
+  --color-gray-700: #5f5f5f;
+  --color-gray-800: #333333;
+  --color-gray-900: #1c1c1c;
+  --color-gray-B: #000000;
+
+  /* Main colors */
+  --color-main: #2974e5;
+  --color-red: #f66a6a;
+
+  /* Typography Token System - Font Families */
+  --font-family-korean: var(--font-pretendard), Pretendard, -apple-system, BlinkMacSystemFont,
+    sans-serif;
+  --font-family-english: var(--font-pretendard), Pretendard, -apple-system, BlinkMacSystemFont,
+    sans-serif;
+  --font-family-mono: monospace;
+
+  /* Typography Token System - Font Weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* Web Headline (Desktop) */
+  --typo-web-headline01-font-size: 48px;
+  --typo-web-headline01-line-height: 60px;
+  --typo-web-headline01-font-weight: 600;
+  --typo-web-headline02-font-size: 36px;
+  --typo-web-headline02-line-height: 48px;
+  --typo-web-headline02-font-weight: 600;
+  --typo-web-headline03-font-size: 28px;
+  --typo-web-headline03-line-height: 36px;
+  --typo-web-headline03-font-weight: 600;
+
+  /* Headline (Mobile) */
+  --typo-headline01-font-size: 24px;
+  --typo-headline01-line-height: 32px;
+  --typo-headline01-font-weight: 700;
+  --typo-headline02-font-size: 22px;
+  --typo-headline02-line-height: 30px;
+  --typo-headline02-font-weight: 800;
+  --typo-headline03-font-size: 20px;
+  --typo-headline03-line-height: 28px;
+  --typo-headline03-font-weight: 700;
+
+  /* Title */
+  --typo-title01-font-size: 18px;
+  --typo-title01-line-height: 24px;
+  --typo-title01-font-weight: 700;
+  --typo-title02-font-size: 16px;
+  --typo-title02-line-height: 22px;
+  --typo-title02-font-weight: 700;
+  --typo-title03-font-size: 14px;
+  --typo-title03-line-height: 20px;
+  --typo-title03-font-weight: 700;
+  --typo-subtitle01-font-size: 14px;
+  --typo-subtitle01-line-height: 22px;
+  --typo-subtitle01-font-weight: 600;
+  --typo-subtitle02-font-size: 12px;
+  --typo-subtitle02-line-height: 18px;
+  --typo-subtitle02-font-weight: 600;
+
+  /* Body */
+  --typo-body01-font-size: 16px;
+  --typo-body01-line-height: 24px;
+  --typo-body01-font-weight: 500;
+  --typo-body02-m-font-size: 14px;
+  --typo-body02-m-line-height: 22px;
+  --typo-body02-m-font-weight: 500;
+  --typo-body03-font-size: 12px;
+  --typo-body03-line-height: 18px;
+  --typo-body03-font-weight: 500;
+  --typo-body01-regular-font-size: 16px;
+  --typo-body01-regular-line-height: 22px;
+  --typo-body01-regular-font-weight: 400;
+  --typo-body02-s-font-size: 14px;
+  --typo-body02-s-line-height: 20px;
+  --typo-body02-s-font-weight: 400;
+  --typo-body03-regular-font-size: 12px;
+  --typo-body03-regular-line-height: 16px;
+  --typo-body03-regular-font-weight: 400;
+
+  /* Caption */
+  --typo-caption01-font-size: 12px;
+  --typo-caption01-line-height: 14px;
+  --typo-caption01-font-weight: 600;
+  --typo-caption02-m-font-size: 10px;
+  --typo-caption02-m-line-height: 12px;
+  --typo-caption02-m-font-weight: 600;
+  --typo-caption02-s-font-size: 10px;
+  --typo-caption02-s-line-height: 12px;
+  --typo-caption02-s-font-weight: 500;
+  --typo-caption03-font-size: 8px;
+  --typo-caption03-line-height: 10px;
+  --typo-caption03-font-weight: 600;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,7 +122,7 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-family-korean);
 }
 
 @layer utilities {

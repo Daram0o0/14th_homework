@@ -54,6 +54,7 @@ export default function CommentListComponent(props: CommentListProps) {
         dataLength={data?.fetchBoardComments?.length ?? 0}
         hasMore={hasMore}
         next={onNext}
+        style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}
         loader={<div>로딩 중입니다</div>}
       >
         {reverse?.map((el) => (

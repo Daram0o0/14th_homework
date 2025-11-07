@@ -1,3 +1,4 @@
+'use client'
 import { useAuthGuard } from 'commons/hooks/useAuthGuard'
 import AdminBadgeDetail from 'components/admin-badges/admin-badge-detail'
 

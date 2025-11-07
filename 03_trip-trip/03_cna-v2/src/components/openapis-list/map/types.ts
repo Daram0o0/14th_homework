@@ -42,3 +42,30 @@ export interface OpenWeatherResponse {
   name: string
   cod: number
 }
+
+export interface GeoFeatureProperties {
+  CTPRVN_CD: string
+  CTP_ENG_NM: string
+  CTP_KOR_NM: string
+}
+
+export type GeoGeometry =
+  | {
+      type: 'Polygon'
+      coordinates: number[][][]
+    }
+  | {
+      type: 'MultiPolygon'
+      coordinates: number[][][][]
+    }
+
+export interface GeoFeature {
+  type: 'Feature'
+  geometry: GeoGeometry
+  properties: GeoFeatureProperties
+}
+
+export interface GeoFeatureCollection {
+  type: 'FeatureCollection'
+  features: GeoFeature[]
+}

@@ -1,3 +1,4 @@
+'use client'
 import { isTokenExpired } from 'commons/utils/auth'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'

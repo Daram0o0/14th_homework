@@ -4,8 +4,14 @@ import Image from 'next/image'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
+interface BadgeDetail {
+  name: string
+  description: string
+  image_url: string
+}
+
 export default function AdminBadgeDetail() {
-  const [badgeDetail, setBadgeDetail] = useState()
+  const [badgeDetail, setBadgeDetail] = useState<BadgeDetail | null>(null)
   const { badgeId } = useParams()
 
   useEffect(() => {
@@ -25,7 +31,7 @@ export default function AdminBadgeDetail() {
       }
     }
     fetchBadgeById()
-  }, [])
+  }, [badgeId])
 
   if (!badgeDetail) return <div>로딩중</div>
   console.log()

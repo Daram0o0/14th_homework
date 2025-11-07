@@ -218,12 +218,15 @@ export const MediumWithButton: Story = {
 
 export const AllStatuses: Story = {
   render: () => (
-    <div
-      style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '400px' }}
-    >
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '400px' }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>Enabled 상태</h3>
-        <Input status="enabled" filled="off" label="Enabled (filled: off)" placeholder="입력하세요" />
+        <Input
+          status="enabled"
+          filled="off"
+          label="Enabled (filled: off)"
+          placeholder="입력하세요"
+        />
         <Input status="enabled" filled="on" label="Enabled (filled: on)" defaultValue="입력된 값" />
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -232,16 +235,40 @@ export const AllStatuses: Story = {
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>Selected & Typing 상태</h3>
-        <Input status="selected&typing" filled="off" label="Selected & Typing (filled: off)" placeholder="입력하세요" />
-        <Input status="selected&typing" filled="on" label="Selected & Typing (filled: on)" defaultValue="입력된 값" />
+        <Input
+          status="selected&typing"
+          filled="off"
+          label="Selected & Typing (filled: off)"
+          placeholder="입력하세요"
+        />
+        <Input
+          status="selected&typing"
+          filled="on"
+          label="Selected & Typing (filled: on)"
+          defaultValue="입력된 값"
+        />
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>Error 상태</h3>
-        <Input status="error" filled="off" label="Error (filled: off)" errorMessage="에러 메시지" placeholder="입력하세요" />
-        <Input status="error" filled="on" label="Error (filled: on)" errorMessage="에러 메시지" defaultValue="잘못된 값" />
+        <Input
+          status="error"
+          filled="off"
+          label="Error (filled: off)"
+          errorMessage="에러 메시지"
+          placeholder="입력하세요"
+        />
+        <Input
+          status="error"
+          filled="on"
+          label="Error (filled: on)"
+          errorMessage="에러 메시지"
+          defaultValue="잘못된 값"
+        />
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>Disabled & Read-only 상태</h3>
+        <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>
+          Disabled & Read-only 상태
+        </h3>
         <Input status="disabled" label="Disabled" placeholder="입력할 수 없습니다" />
         <Input status="read-only" label="Read-only" defaultValue="읽기 전용 값" />
       </div>
@@ -251,20 +278,30 @@ export const AllStatuses: Story = {
 
 export const AllSizes: Story = {
   render: () => (
-    <div
-      style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '400px' }}
-    >
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '400px' }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>Small 크기</h3>
         <Input size="s" label="Small Input" placeholder="입력하세요" />
         <Input size="s" label="Small Input (필수)" required placeholder="입력하세요" />
-        <Input size="s" label="Small Input (에러)" status="error" errorMessage="에러 메시지" placeholder="입력하세요" />
+        <Input
+          size="s"
+          label="Small Input (에러)"
+          status="error"
+          errorMessage="에러 메시지"
+          placeholder="입력하세요"
+        />
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>Medium 크기</h3>
         <Input size="m" label="Medium Input" placeholder="입력하세요" />
         <Input size="m" label="Medium Input (필수)" required placeholder="입력하세요" />
-        <Input size="m" label="Medium Input (에러)" status="error" errorMessage="에러 메시지" placeholder="입력하세요" />
+        <Input
+          size="m"
+          label="Medium Input (에러)"
+          status="error"
+          errorMessage="에러 메시지"
+          placeholder="입력하세요"
+        />
       </div>
     </div>
   ),
@@ -272,22 +309,50 @@ export const AllSizes: Story = {
 
 export const WithButtonVariants: Story = {
   render: () => (
-    <div
-      style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '400px' }}
-    >
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '400px' }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>버튼이 있는 Input (Small)</h3>
+        <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>
+          버튼이 있는 Input (Small)
+        </h3>
         <Input size="s" label="Small + 버튼" showButton placeholder="입력하세요" />
         <Input size="s" label="Small + 버튼 (필수)" showButton required placeholder="입력하세요" />
-        <Input size="s" label="Small + 버튼 (에러)" showButton status="error" errorMessage="에러 메시지" placeholder="입력하세요" />
-        <Input size="s" label="Small + 버튼 (Disabled)" showButton status="disabled" placeholder="입력할 수 없습니다" />
+        <Input
+          size="s"
+          label="Small + 버튼 (에러)"
+          showButton
+          status="error"
+          errorMessage="에러 메시지"
+          placeholder="입력하세요"
+        />
+        <Input
+          size="s"
+          label="Small + 버튼 (Disabled)"
+          showButton
+          status="disabled"
+          placeholder="입력할 수 없습니다"
+        />
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>버튼이 있는 Input (Medium)</h3>
+        <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>
+          버튼이 있는 Input (Medium)
+        </h3>
         <Input size="m" label="Medium + 버튼" showButton placeholder="입력하세요" />
         <Input size="m" label="Medium + 버튼 (필수)" showButton required placeholder="입력하세요" />
-        <Input size="m" label="Medium + 버튼 (에러)" showButton status="error" errorMessage="에러 메시지" placeholder="입력하세요" />
-        <Input size="m" label="Medium + 버튼 (Disabled)" showButton status="disabled" placeholder="입력할 수 없습니다" />
+        <Input
+          size="m"
+          label="Medium + 버튼 (에러)"
+          showButton
+          status="error"
+          errorMessage="에러 메시지"
+          placeholder="입력하세요"
+        />
+        <Input
+          size="m"
+          label="Medium + 버튼 (Disabled)"
+          showButton
+          status="disabled"
+          placeholder="입력할 수 없습니다"
+        />
       </div>
     </div>
   ),
@@ -343,7 +408,10 @@ const textareaMeta = {
   },
 } satisfies Meta<typeof Textarea>
 
-type TextareaStory = StoryObj<typeof textareaMeta>
+// textareaMeta는 타입 체크를 위해 사용됨
+void textareaMeta
+
+type TextareaStory = StoryObj<Meta<typeof Textarea>>
 
 export const TextareaDefault: TextareaStory = {
   args: {
@@ -462,32 +530,73 @@ export const TextareaReadOnly: TextareaStory = {
 
 export const TextareaAllStatuses: TextareaStory = {
   render: () => (
-    <div
-      style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '600px' }}
-    >
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '600px' }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>Enabled 상태</h3>
-        <Textarea status="enabled" filled="off" label="Enabled (filled: off)" placeholder="내용을 입력하세요" />
-        <Textarea status="enabled" filled="on" label="Enabled (filled: on)" defaultValue="입력된 내용입니다.\n여러 줄의 텍스트를 입력할 수 있습니다." />
+        <Textarea
+          status="enabled"
+          filled="off"
+          label="Enabled (filled: off)"
+          placeholder="내용을 입력하세요"
+        />
+        <Textarea
+          status="enabled"
+          filled="on"
+          label="Enabled (filled: on)"
+          defaultValue="입력된 내용입니다.\n여러 줄의 텍스트를 입력할 수 있습니다."
+        />
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>Filled 상태</h3>
-        <Textarea status="filled" filled="on" label="Filled" defaultValue="입력된 내용입니다.\n여러 줄의 텍스트를 입력할 수 있습니다." />
+        <Textarea
+          status="filled"
+          filled="on"
+          label="Filled"
+          defaultValue="입력된 내용입니다.\n여러 줄의 텍스트를 입력할 수 있습니다."
+        />
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>Selected & Typing 상태</h3>
-        <Textarea status="selected&typing" filled="off" label="Selected & Typing (filled: off)" placeholder="내용을 입력하세요" />
-        <Textarea status="selected&typing" filled="on" label="Selected & Typing (filled: on)" defaultValue="입력된 내용입니다.\n여러 줄의 텍스트를 입력할 수 있습니다." />
+        <Textarea
+          status="selected&typing"
+          filled="off"
+          label="Selected & Typing (filled: off)"
+          placeholder="내용을 입력하세요"
+        />
+        <Textarea
+          status="selected&typing"
+          filled="on"
+          label="Selected & Typing (filled: on)"
+          defaultValue="입력된 내용입니다.\n여러 줄의 텍스트를 입력할 수 있습니다."
+        />
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>Error 상태</h3>
-        <Textarea status="error" filled="off" label="Error (filled: off)" errorMessage="에러 메시지" placeholder="내용을 입력하세요" />
-        <Textarea status="error" filled="on" label="Error (filled: on)" errorMessage="에러 메시지" defaultValue="잘못된 내용" />
+        <Textarea
+          status="error"
+          filled="off"
+          label="Error (filled: off)"
+          errorMessage="에러 메시지"
+          placeholder="내용을 입력하세요"
+        />
+        <Textarea
+          status="error"
+          filled="on"
+          label="Error (filled: on)"
+          errorMessage="에러 메시지"
+          defaultValue="잘못된 내용"
+        />
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>Disabled & Read-only 상태</h3>
+        <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>
+          Disabled & Read-only 상태
+        </h3>
         <Textarea status="disabled" label="Disabled" placeholder="입력할 수 없습니다" />
-        <Textarea status="read-only" label="Read-only" defaultValue="읽기 전용 내용입니다.\n수정할 수 없습니다." />
+        <Textarea
+          status="read-only"
+          label="Read-only"
+          defaultValue="읽기 전용 내용입니다.\n수정할 수 없습니다."
+        />
       </div>
     </div>
   ),
@@ -495,20 +604,35 @@ export const TextareaAllStatuses: TextareaStory = {
 
 export const TextareaAllSizes: TextareaStory = {
   render: () => (
-    <div
-      style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '600px' }}
-    >
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '600px' }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>Small 크기</h3>
         <Textarea size="s" label="Small Textarea" placeholder="내용을 입력하세요" />
         <Textarea size="s" label="Small Textarea (필수)" required placeholder="내용을 입력하세요" />
-        <Textarea size="s" label="Small Textarea (에러)" status="error" errorMessage="에러 메시지" placeholder="내용을 입력하세요" />
+        <Textarea
+          size="s"
+          label="Small Textarea (에러)"
+          status="error"
+          errorMessage="에러 메시지"
+          placeholder="내용을 입력하세요"
+        />
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>Medium 크기</h3>
         <Textarea size="m" label="Medium Textarea" placeholder="내용을 입력하세요" />
-        <Textarea size="m" label="Medium Textarea (필수)" required placeholder="내용을 입력하세요" />
-        <Textarea size="m" label="Medium Textarea (에러)" status="error" errorMessage="에러 메시지" placeholder="내용을 입력하세요" />
+        <Textarea
+          size="m"
+          label="Medium Textarea (필수)"
+          required
+          placeholder="내용을 입력하세요"
+        />
+        <Textarea
+          size="m"
+          label="Medium Textarea (에러)"
+          status="error"
+          errorMessage="에러 메시지"
+          placeholder="내용을 입력하세요"
+        />
       </div>
     </div>
   ),

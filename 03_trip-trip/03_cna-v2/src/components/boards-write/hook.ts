@@ -89,9 +89,9 @@ export default function useBoardForm(props: BoardFormProps) {
     if (data?.fetchBoard) {
       const { writer, title, contents, youtubeUrl, images } = data.fetchBoard
       reset({
-        writer, //'string | null | undefined' 형식은 'string | undefined' 형식에 할당할 수 없습니다. // 'null' 형식은 'string | undefined' 형식에 할당할 수 없습니다.ts(2322)
-        title,
-        contents,
+        writer: writer ?? '',
+        title: title ?? '',
+        contents: contents ?? '',
         youtubeUrl: youtubeUrl ?? '',
         images: images ?? ['', '', ''],
       })
@@ -182,15 +182,6 @@ export default function useBoardForm(props: BoardFormProps) {
   //   })
   // }
 
-  const onChangeAddress = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value, name } = event.target
-
-    setAddress({
-      ...address,
-      [name]: value,
-    })
-  }
-
   // // image index에 일치하게 업로드
   const setImageByIndex = (idx: number, url: string) => {
     const currentImages = watch('images') || ['', '', '']
@@ -199,14 +190,14 @@ export default function useBoardForm(props: BoardFormProps) {
     setValue('images', newImages, { shouldValidate: true })
   }
 
-  const onSubmit = async (formData) => {
+  const onSubmit = async (formData: z.infer<typeof boardSchema>) => {
     if (props.isEdit) {
       const updateInput: UpdateBoardInput = {}
 
-      if (dirtyFields.title) updateInput.title = data?.title
-      if (dirtyFields.contents) updateInput.contents = data?.contents
-      if (dirtyFields.youtubeUrl) updateInput.youtubeUrl = data?.youtubeUrl
-      if (dirtyFields.images) updateInput.images = data?.images
+      if (dirtyFields.title) updateInput.title = formData.title
+      if (dirtyFields.contents) updateInput.contents = formData.contents
+      if (dirtyFields.youtubeUrl) updateInput.youtubeUrl = formData.youtubeUrl
+      if (dirtyFields.images) updateInput.images = formData.images
 
       const boardAddress: BoardAddressInput = {}
       if (address.zipcode !== data?.fetchBoard?.boardAddress?.zipcode)

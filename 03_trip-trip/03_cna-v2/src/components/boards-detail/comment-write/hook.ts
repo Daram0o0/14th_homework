@@ -46,7 +46,7 @@ export default function useCommentWrite(props: UseCommentWriteProps) {
 
   const handleSubmit = async () => {
     try {
-      const { data } = await createBoardComment({
+      await createBoardComment({
         variables: {
           createBoardCommentInput: {
             writer,
@@ -74,7 +74,7 @@ export default function useCommentWrite(props: UseCommentWriteProps) {
 
   const handleChange = async () => {
     try {
-      const { data } = await updateBoardComment({
+      await updateBoardComment({
         variables: {
           updateBoardCommentInput: {
             contents,

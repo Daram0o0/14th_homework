@@ -3,7 +3,9 @@ import { CustomOverlayMap, Map, Polygon, useKakaoLoader } from 'react-kakao-maps
 import geo from 'commons/map/SIDO_MAP_2022.json'
 import { useState } from 'react'
 import { geomToPolygons, getWeatherIconUrl, useWeather } from './hook'
+import { GeoFeatureCollection } from './types'
 import styles from './styles.module.css'
+import Image from 'next/image'
 
 const COLORS = [
   '#7F5A83',
@@ -40,7 +42,7 @@ export default function MapComponent() {
 
   return (
     <Map center={MAP_CENTER} level={13} className={styles.mapLayout}>
-      {(geo as any).features.map((f: any, idx: number) => {
+      {(geo as GeoFeatureCollection).features.map((f, idx: number) => {
         const id = f.properties.CTPRVN_CD
         const en_name = f.properties.CTP_ENG_NM
         const k_name = f.properties.CTP_KOR_NM
@@ -52,7 +54,7 @@ export default function MapComponent() {
           polys.length > 0 && polys[0].length > 0 ? polys[0][0][0] : { lat: 0, lng: 0 }
         return (
           <div key={id}>
-            {polys.map((ring: any, pIdx: number) => {
+            {polys.map((ring, pIdx: number) => {
               return (
                 <>
                   <Polygon
@@ -84,9 +86,11 @@ export default function MapComponent() {
                         {error && <div className="text-red-500">{error}</div>}
                         {!isLoading && weatherData && (
                           <div className={styles.tooltipContent}>
-                            <img
+                            <Image
                               src={getWeatherIconUrl(weatherData?.weather?.[0]?.icon)}
                               alt="weather icon"
+                              width={50}
+                              height={50}
                               className={styles.tooltipImg}
                             />
                             <div className={styles.tooltipTexts}>

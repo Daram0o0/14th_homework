@@ -1,11 +1,16 @@
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { Badge } from '../admin-badge-list'
 
 // TODO: 스타일 입히기
-export default function AdminBadgeListItem({ el }) {
+interface AdminBadgeListItemProps {
+  el: Badge
+}
+
+export default function AdminBadgeListItem({ el }: AdminBadgeListItemProps) {
   // console.log('🚀 ~ AdminBadgeListItem ~ el:', el)
   const router = useRouter()
-  const handleNavigate = (id) => {
+  const handleNavigate = (id: string) => {
     router.push(`/admin/badges/${id}`)
   }
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { OpenWeatherResponse } from './types'
+import { OpenWeatherResponse, GeoGeometry } from './types'
 import { fetchWeather } from 'api/weather/fetchWeather'
 
 export function useWeather(city: string | null) {
@@ -35,7 +35,7 @@ export function useWeather(city: string | null) {
 
 export const toLatLng = ([lng, lat]: number[]) => ({ lat, lng })
 
-export const geomToPolygons = (geom: any) => {
+export const geomToPolygons = (geom: GeoGeometry | null | undefined) => {
   if (!geom) return []
   if (geom.type === 'Polygon') {
     return [geom.coordinates.map((ring: number[][]) => ring.map(toLatLng))]
@@ -49,5 +49,5 @@ export const geomToPolygons = (geom: any) => {
 }
 
 export const getWeatherIconUrl = (icon: string) => {
-  return icon ? `http://openweathermap.org/img/wn/${icon}.png ` : ''
+  return icon ? `https://openweathermap.org/img/wn/${icon}.png` : ''
 }

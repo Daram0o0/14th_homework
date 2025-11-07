@@ -5,9 +5,11 @@ import { Search, DriveFileRenameOutline } from '@mui/icons-material'
 import { ChangeEvent } from 'react'
 import _ from 'lodash'
 import { useRouter } from 'next/navigation'
+import { Button } from '@commons/ui'
+import { BoardsSearchProps } from './types'
 const { RangePicker } = DatePicker
 
-export default function BoardsSearch(props) {
+export default function BoardsSearch(props: BoardsSearchProps) {
   const router = useRouter()
   const handleNavigate = () => {
     router.push('/boards/new')
@@ -56,13 +58,20 @@ export default function BoardsSearch(props) {
         </div>
 
         {/* 검색 버튼 */}
-        <button className={styles.searchButton}>검색</button>
+        <Button variant="secondary" size="medium" theme="light">
+          검색
+        </Button>
       </div>
       {/* 트립토크 등록 */}
-      <button className={styles.iconButton} onClick={handleNavigate}>
-        <DriveFileRenameOutline />
-        <p>트립토크 등록</p>
-      </button>
+      <Button
+        onClick={handleNavigate}
+        leftIcon={<DriveFileRenameOutline />}
+        variant="primary"
+        size="medium"
+        theme="light"
+      >
+        트립토크 등록
+      </Button>
     </div>
   )
 }

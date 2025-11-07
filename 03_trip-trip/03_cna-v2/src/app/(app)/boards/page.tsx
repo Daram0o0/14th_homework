@@ -37,8 +37,8 @@ function BoardsPage() {
         <BoardsSearch keyword={keyword} refetch={refetch} setKeyword={setKeyword} />
         <div className={styles.boardFrame}>
           <BoardsListComponent
-            data={data}
-            dataBoardsCount={dataBoardsCount}
+            data={data ?? { fetchBoards: [] }}
+            dataBoardsCount={dataBoardsCount ?? { fetchBoardsCount: 0 }}
             currentPage={currentPage}
             keyword={keyword}
           />

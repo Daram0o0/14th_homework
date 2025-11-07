@@ -27,6 +27,7 @@ import {
 } from '@mui/icons-material'
 import { Tooltip } from 'antd'
 import { formatDate } from 'commons/utils/formatDate'
+import { Button } from '@commons/ui'
 
 const IMAGE_SRC = {
   profileImage: {
@@ -131,14 +132,24 @@ export default function BoardDetailPage() {
           </div>
         </div>
         <div className={styles.detailButtonsContainer}>
-          <button className={styles.detailButton} onClick={goToBoardsPage}>
-            <MenuOutlined />
-            <div>목록으로</div>
-          </button>
-          <button className={styles.detailButton} onClick={goToEditPage}>
-            <EditOutlined />
-            <div>수정하기</div>
-          </button>
+          <Button
+            onClick={goToBoardsPage}
+            leftIcon={<MenuOutlined />}
+            variant="outline"
+            size="small"
+            theme="light"
+          >
+            목록으로
+          </Button>
+          <Button
+            onClick={goToEditPage}
+            leftIcon={<EditOutlined />}
+            variant="outline"
+            size="small"
+            theme="light"
+          >
+            수정하기
+          </Button>
         </div>
       </div>
     </div>

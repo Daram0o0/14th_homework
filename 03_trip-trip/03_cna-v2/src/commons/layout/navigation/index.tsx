@@ -16,11 +16,13 @@ import {
 import { useRouter } from 'next/navigation'
 import { Dropdown, MenuProps, Space } from 'antd'
 import ProfileImage from 'assets/profiles/profile5.webp'
+import { useActiveNavigation } from './hook'
 
 export default function Navigation() {
   const { data, error } = useQuery<FetchUserLoggedInQuery, FetchUserLoggedInQueryVariables>(
     FetchUserLoggedInDocument
   )
+  const { isBoardsActive, isProductsActive, isMypageActive } = useActiveNavigation()
 
   const [logoutUser] = useMutation<LogoutUserMutation, LogoutUserMutationVariables>(
     LogoutUserDocument
@@ -68,14 +70,14 @@ export default function Navigation() {
       <div className={styles.active_btns}>
         <Image src={triptripLogo} alt="triptrip_logo" width={51.52} />
         <ul className={styles.menu}>
-          <li className={styles.active}>
+          <li className={isBoardsActive ? styles.active : ''}>
             <Link href={'/boards'}>트립토크</Link>
           </li>
-          <li>
-            <Link href={'#'}>숙박권 구매</Link>
+          <li className={isProductsActive ? styles.active : ''}>
+            <Link href={'/products'}>숙박권 구매</Link>
           </li>
-          <li>
-            <Link href={'#'}>마이 페이지</Link>
+          <li className={isMypageActive ? styles.active : ''}>
+            <Link href={'/mypage'}>마이 페이지</Link>
           </li>
         </ul>
       </div>

@@ -1,0 +1,482 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 1280px;
+}
+
+/* 탭 영역 (1280 x 49) */
+.tabContainer {
+  display: flex;
+  flex-direction: row;
+  width: 1280px;
+  height: 49px;
+  border-bottom: 1px solid #e4e4e4;
+  gap: 0;
+}
+
+.tabButton {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  cursor: pointer;
+}
+
+.tabButton:first-child {
+  width: 107.578125px;
+  height: 48px;
+}
+
+.tabButton:last-child {
+  width: 103.375px;
+  height: 48px;
+}
+
+.tabTextActive {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 24px;
+  color: #000000;
+  padding: 12px 0;
+  margin-left: 24px;
+}
+
+.tabTextInactive {
+  font-family: 'Helvetica', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #777777;
+  padding: 12px 0;
+  margin-left: 24px;
+}
+
+.tabIndicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 107.578125px;
+  height: 2px;
+  background-color: #000000;
+}
+
+/* gap (1280 x 40) */
+.gap {
+  width: 1280px;
+  height: 40px;
+}
+
+/* 헤더 영역 */
+.header {
+  display: flex;
+  flex-direction: column;
+  width: 1280px;
+  height: 96px;
+  gap: 0;
+}
+
+/* 메인 영역 (1280 x 600) */
+.mainArea {
+  display: flex;
+  flex-direction: row;
+  width: 1280px;
+  height: 480px;
+  /* gap: 24px; */
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.titleRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 1280px;
+  height: 36px;
+  margin-bottom: 0;
+}
+
+.title {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 36px;
+  color: #000000;
+  margin: 0;
+  padding: 0;
+}
+
+.iconButtons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  width: 173px;
+  height: 32px;
+}
+
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: #000000;
+}
+
+.iconButton svg {
+  width: 24px;
+  height: 24px;
+}
+
+.bookmarkButton {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 53px;
+  height: 32px;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.bookmarkButton svg {
+  width: 24px;
+  height: 24px;
+  color: #ffffff;
+}
+
+.bookmarkCount {
+  font-family: 'Pretendard Variable', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #ffffff;
+}
+
+.subtitle {
+  font-family: 'Pretendard Variable', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: #777777;
+  margin: 8px 0 0 0;
+  padding: 0;
+  height: 24px;
+}
+
+.tags {
+  font-family: 'Pretendard Variable', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #2974e5;
+  margin: 8px 0 0 0;
+  padding: 0;
+  width: 1280px;
+  height: 20px;
+}
+
+.imageGallery {
+  display: flex;
+  flex-direction: row;
+  /* width: 820px; */
+  height: 600px;
+  gap: 24px;
+  align-items: flex-start;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.mainImage {
+  width: 640px;
+  height: 480px;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.mainImageContent {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.thumbnailContainer {
+  width: 180px;
+  height: 480px;
+  position: relative;
+  margin-left: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.thumbnailSwiper {
+  width: 100%;
+  height: 100%;
+}
+
+.thumbnailSwiper :global(.swiper-wrapper) {
+  display: flex;
+  flex-direction: column;
+}
+
+.thumbnailSlide {
+  height: 136px !important;
+  width: 180px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.thumbnail {
+  width: 180px;
+  height: 136px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.thumbnailImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.gradientOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 180px;
+  height: 600px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+  pointer-events: none;
+  border-radius: 8px;
+}
+
+/* 오른쪽: 가격/구매/판매자 정보 영역 */
+.purchaseInfo {
+  display: flex;
+  flex-direction: column;
+  width: 412px;
+  height: 356px;
+  flex-shrink: 0;
+}
+
+.purchaseCard {
+  display: flex;
+  flex-direction: column;
+  width: 412px;
+  height: 356px;
+  gap: 0;
+}
+
+.priceSection {
+  display: flex;
+  flex-direction: column;
+  width: 412px;
+  height: 204px;
+  border: 1px solid #e4e4e4;
+  border-radius: 8px;
+  padding: 24px;
+  gap: 0;
+  box-sizing: border-box;
+}
+
+.priceRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 105px;
+  height: 32px;
+  gap: 0;
+  margin-bottom: 8px;
+}
+
+.price {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 32px;
+  color: #000000;
+}
+
+.priceUnit {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 32px;
+  color: #000000;
+}
+
+.descriptionSection {
+  display: flex;
+  flex-direction: column;
+  width: 364px;
+  height: 44px;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.descriptionText {
+  font-family: 'Pretendard Variable', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #5f5f5f;
+  margin: 0;
+  padding: 0;
+}
+
+.descriptionTextLight {
+  font-family: 'Pretendard Variable', sans-serif;
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 20px;
+  color: #5f5f5f;
+  margin: 0;
+  padding: 0;
+}
+
+.purchaseButton {
+  width: 364px;
+  height: 52px;
+}
+
+.sellerSection {
+  display: flex;
+  flex-direction: column;
+  width: 412px;
+  height: 128px;
+  background-color: #f2f2f2;
+  border-radius: 8px;
+  padding: 24px;
+  gap: 16px;
+  margin-top: 24px;
+  box-sizing: border-box;
+}
+
+.sellerTitle {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 28px;
+  color: #000000;
+  margin: 0;
+  padding: 0;
+}
+
+.sellerProfile {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 364px;
+  height: 40px;
+  gap: 14px;
+  position: relative;
+}
+
+.sellerImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.sellerName {
+  font-family: 'Pretendard Variable', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #333333;
+}
+
+.sellerArrow {
+  width: 24px;
+  height: 24px;
+  color: #333333;
+  position: absolute;
+  right: 0;
+}
+
+/* line (844 x 1) */
+.line {
+  width: 844px;
+  height: 1px;
+  background-color: #d4d3d3;
+}
+
+/* 내용 영역 (844 x auto) */
+.contentArea {
+  display: flex;
+  flex-direction: column;
+  width: 844px;
+  min-height: 596px;
+}
+
+.contentTitle {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 28px;
+  color: #333333;
+  margin: 0 0 16px 0;
+  padding: 0;
+}
+
+.contentText {
+  font-family: 'Pretendard Variable', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #333333;
+  margin: 0;
+  padding: 0;
+  white-space: pre-line;
+}
+
+/* 지도 영역 (844 x 324) */
+.mapArea {
+  display: flex;
+  flex-direction: column;
+  width: 844px;
+  height: 324px;
+}
+
+.mapTitle {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 28px;
+  color: #333333;
+  margin: 0 0 16px 0;
+  padding: 0;
+}
+
+.mapContainer {
+  display: flex;
+  flex-direction: column;
+  width: 844px;
+  height: 280px;
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.kakaoMap {
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+}

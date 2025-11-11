@@ -1,0 +1,188 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 1280px;
+  height: 688px;
+}
+
+.title {
+  width: 1280px;
+  height: 36px;
+  font-family: var(--font-family-korean);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 36px;
+  color: #000000;
+}
+
+.gap {
+  width: 1280px;
+  height: 24px;
+}
+
+.carouselWrapper {
+  width: 1280px;
+  height: 628px;
+}
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.slide {
+  width: 628px;
+  height: 628px;
+}
+
+.accommodationItem {
+  position: relative;
+  width: 628px;
+  height: 628px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.imagePlaceholder {
+  width: 100%;
+  height: 100%;
+  background-color: #e0e0e0;
+  background-image: linear-gradient(45deg, #f0f0f0 25%, transparent 25%),
+    linear-gradient(-45deg, #f0f0f0 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #f0f0f0 75%),
+    linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}
+
+.gradientOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  pointer-events: none;
+}
+
+.bookmarkButton {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 53px;
+  height: 32px;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  z-index: 10;
+}
+
+.bookmarkIcon {
+  width: 24px;
+  height: 24px;
+  color: #ffffff;
+}
+
+.bookmarkCount {
+  font-family: var(--font-family-korean);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  color: #ffffff;
+}
+
+.contentArea {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px;
+  z-index: 5;
+}
+
+.titleAndDescription {
+  width: 580px;
+  height: 60px;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.itemTitle {
+  width: 580px;
+  height: 32px;
+  font-family: var(--font-family-korean);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 32px;
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemDescription {
+  width: 580px;
+  height: 24px;
+  font-family: var(--font-family-korean);
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 24px;
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.priceArea {
+  width: 580px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.price {
+  font-family: var(--font-family-korean);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 32px;
+  color: #ffffff;
+}
+
+.currency {
+  font-family: var(--font-family-korean);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 32px;
+  color: #ffffff;
+}
+
+/* Swiper 네비게이션 스타일 커스터마이징 */
+.carouselWrapper :global(.swiper-button-next),
+.carouselWrapper :global(.swiper-button-prev) {
+  color: #000000;
+  width: 40px;
+  height: 40px;
+}
+
+.carouselWrapper :global(.swiper-button-next::after),
+.carouselWrapper :global(.swiper-button-prev::after) {
+  font-size: 24px;
+  font-weight: 700;
+}
+

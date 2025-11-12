@@ -1,67 +1,119 @@
 'use client'
 
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { Navigation } from 'swiper/modules'
+import { Navigation, Autoplay } from 'swiper/modules'
+import type { Swiper as SwiperType } from 'swiper'
+import { useRef } from 'react'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import styles from './styles.module.css'
-
-// 임시 데이터 (추후 API 연동 시 교체)
-const accommodationData = [
-  {
-    id: 1,
-    title: '포항 : 당장 가고 싶은 숙소',
-    description: '살어리 살어리랏다 쳥산(靑山)애 살어리랏다멀위랑 ᄃᆞ래랑 먹고 쳥산(靑山)애 살어리랏다얄리얄리 얄랑셩 얄라리 얄라 우러라 우러라 새여 자고 니러 우러라 새여 널라와 시름 한 나도 자고 니러 우니로라 얄리얄리 얄라셩 얄라리 얄라',
-    price: '32,900',
-    bookmarkCount: 24,
-    imageUrl: '/images/placeholder.jpg', // 임시 이미지 경로
-  },
-  {
-    id: 2,
-    title: '강릉 : 마음까지 깨끗해지는 하얀 숙소',
-    description: '살어리 살어리랏다 강릉에 평생 살어리랏다',
-    price: '32,900',
-    bookmarkCount: 24,
-    imageUrl: '/images/placeholder.jpg', // 임시 이미지 경로
-  },
-  {
-    id: 3,
-    title: '제주 : 바다가 보이는 아늑한 숙소',
-    description: '제주 바다를 바라보며 휴식을 즐기세요',
-    price: '45,000',
-    bookmarkCount: 18,
-    imageUrl: '/images/placeholder.jpg', // 임시 이미지 경로
-  },
-  {
-    id: 4,
-    title: '부산 : 해운대 근처 편리한 숙소',
-    description: '해운대 해수욕장과 가까운 최적의 위치',
-    price: '38,500',
-    bookmarkCount: 32,
-    imageUrl: '/images/placeholder.jpg', // 임시 이미지 경로
-  },
-]
+import useCarouselBinding from './hooks/index.binding.hook'
+import Image from 'next/image'
+import cheongsanImage from '@assets/cheongsan.png'
 
 export default function Carousel() {
+  const { products, loading, error } = useCarouselBinding()
+  const swiperRef = useRef<SwiperType | null>(null)
+
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.title}>2024 끝여름 낭만있게 마무리 하고 싶다면?</div>
+        <div className={styles.gap}></div>
+        <div className={styles.carouselWrapper}>로딩 중...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.title}>2024 끝여름 낭만있게 마무리 하고 싶다면?</div>
+        <div className={styles.gap}></div>
+        <div className={styles.carouselWrapper}>데이터를 불러오는 중 오류가 발생했습니다.</div>
+      </div>
+    )
+  }
+
+  const formatPrice = (price: number | null | undefined): string => {
+    if (!price) return '0'
+    return price.toLocaleString('ko-KR')
+  }
+
+  const getImageUrl = (imageUrl: string | null | undefined): string | null => {
+    if (!imageUrl) return null
+    // 이미 절대 URL인 경우 그대로 반환
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl
+    }
+    // 상대 경로인 경우 storage.googleapis.com을 붙여서 반환
+    if (imageUrl.startsWith('/')) {
+      return `https://storage.googleapis.com${imageUrl}`
+    }
+    // 경로만 있는 경우 storage.googleapis.com을 붙여서 반환
+    return `https://storage.googleapis.com/${imageUrl}`
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.title}>2024 끝여름 낭만있게 마무리 하고 싶다면?</div>
       <div className={styles.gap}></div>
       <div className={styles.carouselWrapper}>
+        <button
+          className={styles.navButtonPrev}
+          onClick={() => swiperRef.current?.slidePrev()}
+          aria-label="이전 슬라이드"
+        >
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="20" fill="white" />
+            <path
+              d="M22 14L16 20L22 26"
+              stroke="#000000"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
         <Swiper
           slidesPerView={2}
           spaceBetween={24}
-          navigation={true}
-          modules={[Navigation]}
+          modules={[Navigation, Autoplay]}
           className={styles.swiper}
+          loop={products.length >= 4}
+          autoplay={{
+            delay: 3000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
+          }}
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper
+          }}
         >
-          {accommodationData.map((item) => (
-            <SwiperSlide key={item.id} className={styles.slide}>
-              <div className={styles.accommodationItem}>
-                <div className={styles.imageWrapper}>
-                  <div className={styles.imagePlaceholder}></div>
-                  <div className={styles.gradientOverlay}></div>
-                </div>
+          {products.map((product) => {
+            const rawImageUrl = product.images && product.images[0] ? product.images[0] : null
+            const imageUrl = rawImageUrl ? getImageUrl(rawImageUrl) : null
+            return (
+              <SwiperSlide key={product._id} className={styles.slide}>
+                <div className={styles.accommodationItem}>
+                  <div className={styles.imageWrapper}>
+                    {imageUrl ? (
+                      <Image
+                        src={imageUrl}
+                        alt={product.name}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <Image
+                        src={cheongsanImage}
+                        alt="청산 이미지"
+                        fill
+                        style={{ objectFit: 'cover' }}
+                      />
+                    )}
+                    <div className={styles.gradientOverlay}></div>
+                  </div>
                 <div className={styles.bookmarkButton}>
                   <svg
                     width="24"
@@ -79,22 +131,39 @@ export default function Carousel() {
                       strokeLinejoin="round"
                     />
                   </svg>
-                  <span className={styles.bookmarkCount}>{item.bookmarkCount}</span>
+                  <span className={styles.bookmarkCount}>{product.pickedCount ?? 0}</span>
                 </div>
                 <div className={styles.contentArea}>
                   <div className={styles.titleAndDescription}>
-                    <div className={styles.itemTitle}>{item.title}</div>
-                    <div className={styles.itemDescription}>{item.description}</div>
+                    <div className={styles.itemTitle}>{product.name}</div>
+                    <div className={styles.itemDescription}>{product.contents}</div>
                   </div>
                   <div className={styles.priceArea}>
-                    <span className={styles.price}>{item.price}</span>
+                    <span className={styles.price}>{formatPrice(product.price)}</span>
                     <span className={styles.currency}>원</span>
                   </div>
                 </div>
               </div>
             </SwiperSlide>
-          ))}
+            )
+          })}
         </Swiper>
+        <button
+          className={styles.navButtonNext}
+          onClick={() => swiperRef.current?.slideNext()}
+          aria-label="다음 슬라이드"
+        >
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="20" fill="white" />
+            <path
+              d="M18 14L24 20L18 26"
+              stroke="#000000"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
       </div>
     </div>
   )

@@ -14,7 +14,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className={styles.layout}>
       <Navigation />
       {!isActiveHeader && <BannerComponent />}
-      {children}
+      <div className={styles.content}>{children}</div>
     </div>
   )
 }

@@ -41,7 +41,16 @@
 
 기존히스토리-참고만) 버튼 중 왼쪽과 오른쪽 모든 아이콘을 가진 경우는 없을 것.
 
+기존히스토리-참고만) 오른쪽에 아이콘을 가진 아이콘은 padding: 8px 12px이며, 버튼내 text와 아이콘의 gap은 8px임. border-radius는 왼쪽에 아이콘을 가진 버튼과 다름.
 ==============================================
+[2차 요구사항]
 
-핵심요구사항) 오른쪽에 아이콘을 가진 아이콘은 padding: 8px 12px이며, 버튼내 text와 아이콘의 gap은 8px임. border-radius는 왼쪽에 아이콘을 가진 버튼과 다름.
-
+핵심요구사항) 이미 정의된 버튼을 'Button'과 'FormButton'으로 나눌 것
+  1) Button
+    - Dumb component
+    - disabled boolean 값을 받을 것
+    - RHF에 대해서 아무것도 모를 것
+  2) FormButton
+    - RHF 로직
+    - RHF의 formState를 참고할 것
+    - disabled 여부를 계산해 1번의 Dumb Button에게 전달 할 것.

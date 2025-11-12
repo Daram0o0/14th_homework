@@ -1,0 +1,2 @@
+assets/products_banner.png의 이미지를 배너에 넣을 것
+구현 tsx) src/components/products-list/index.tsx

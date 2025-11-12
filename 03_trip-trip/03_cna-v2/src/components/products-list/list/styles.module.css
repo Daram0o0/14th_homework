@@ -31,7 +31,7 @@
   gap: 16px;
 }
 
-.tab {
+.tabContainer .tab {
   width: 123px;
   height: 40px;
   border-radius: 8px;
@@ -42,9 +42,10 @@
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
+  border: none;
 }
 
-.tab.active {
+.tabContainer .tab.active {
   font-weight: 600;
 }
 
@@ -127,6 +128,10 @@
   color: #919191;
 }
 
+.icon {
+  margin-right: 10px;
+}
+
 .listContainer {
   display: flex;
   flex-direction: column;
@@ -138,7 +143,6 @@
   width: 1280px;
   height: 104px;
   border-radius: 16px;
-  padding: 16px;
   align-items: center;
   justify-content: space-between;
 }
@@ -169,6 +173,7 @@
 .filterIcon .icon {
   width: 24px;
   height: 24px;
+  margin: auto;
   color: #333333;
 }
 

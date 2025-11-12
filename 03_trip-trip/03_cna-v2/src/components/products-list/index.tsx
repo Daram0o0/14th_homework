@@ -3,6 +3,7 @@ import Carousel from './carousel'
 import ProductsListComponent from './list'
 import Image from 'next/image'
 import cheongsanImage from '@assets/cheongsan.png'
+import productsBannerImage from '@assets/products_banner.png'
 
 export default function ProductsList() {
   return (
@@ -37,7 +38,15 @@ export default function ProductsList() {
 
       <Carousel />
       <div className={styles.gap}></div>
-      <div className={styles.banner}>배너</div>
+      <div className={styles.banner}>
+        <Image
+          src={productsBannerImage}
+          alt="배너"
+          width={1280}
+          height={240}
+          className={styles.bannerImage}
+        />
+      </div>
       <div className={styles.gap}></div>
       <ProductsListComponent />
       <div className={styles.gapSmall}></div>

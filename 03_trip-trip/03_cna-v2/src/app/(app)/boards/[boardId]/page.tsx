@@ -4,13 +4,10 @@ import styles from './styles.module.css'
 import CommentWriteComponent from 'components/boards-detail/comment-write'
 import CommentListComponent from 'components/boards-detail/comment-list'
 import { useParams } from 'next/navigation'
-// import { useAuthGuard } from 'commons/hooks/useAuthGuard'
-import { withAuth } from 'commons/hocs/withAuth'
 
 function BoardsDetailPage() {
   const params = useParams()
   const boardId = typeof params.boardId === 'string' ? params.boardId : ''
-  // useAuthGuard()
   return (
     <div className={styles.detailLayout}>
       <div className={styles.detailBody}>
@@ -22,4 +19,4 @@ function BoardsDetailPage() {
   )
 }
 
-export default withAuth(BoardsDetailPage)
+export default BoardsDetailPage

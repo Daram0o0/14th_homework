@@ -4,7 +4,7 @@ import Image from 'next/image'
 import useBoardsList from './hook'
 import { useState } from 'react'
 import { BoardsListProps } from './types'
-import { useAuthStatus } from 'commons/hooks/useAuthGuard'
+import { useAuth } from 'commons/providers/auth/auth.provider'
 
 const IMAGE_SRC = {
   deleteImage: {
@@ -18,7 +18,7 @@ export default function BoardsListComponent(props: BoardsListProps) {
   const [hoveredId, setHoveredId] = useState('')
 
   const { onClickDelete, onClickDetail } = useBoardsList({ hoveredId })
-  const isAuthenticated = useAuthStatus()
+  const { isAuthenticated } = useAuth()
 
   return (
     <div className={styles.boardInnerBody}>

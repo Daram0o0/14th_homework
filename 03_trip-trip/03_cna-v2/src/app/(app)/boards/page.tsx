@@ -13,8 +13,6 @@ import {
 } from 'commons/graphql/graphql'
 import { useState } from 'react'
 import BoardsSearch from 'components/boards-list/search'
-// import { useCheckTokenExpired } from 'commons/hooks/useAuthGuard'
-import { withAuth } from 'commons/hocs/withAuth'
 
 function BoardsPage() {
   const [keyword, setKeyword] = useState('')
@@ -53,4 +51,4 @@ function BoardsPage() {
     </div>
   )
 }
-export default withAuth(BoardsPage)
+export default BoardsPage

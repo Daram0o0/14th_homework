@@ -6,6 +6,7 @@ import { Inter } from 'next/font/google'
 import ApiProvider from 'commons/settings/apollo-setting'
 import { ModalProvider } from '@commons/ui'
 import { AuthProvider } from 'commons/providers/auth/auth.provider'
+import { AuthGuard } from 'commons/providers/auth/auth.guard'
 // import Layout from 'commons/layout'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -31,7 +32,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${pretendard.variable} ${inter.className}`}>
         <AuthProvider>
           <ApiProvider>
-            <ModalProvider>{children}</ModalProvider>
+            <ModalProvider>
+              <AuthGuard>{children}</AuthGuard>
+            </ModalProvider>
           </ApiProvider>
         </AuthProvider>
       </body>

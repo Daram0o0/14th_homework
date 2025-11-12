@@ -8,11 +8,13 @@ import 'swiper/css'
 import 'swiper/css/navigation'
 import styles from './styles.module.css'
 import useCarouselBinding from './hooks/index.binding.hook'
+import useLinkRouting from './hooks/index.link.routing.hook'
 import Image from 'next/image'
 import cheongsanImage from '@assets/cheongsan.png'
 
 export default function Carousel() {
   const { products, loading, error } = useCarouselBinding()
+  const { onClickProduct } = useLinkRouting()
   const swiperRef = useRef<SwiperType | null>(null)
 
   if (loading) {
@@ -95,7 +97,10 @@ export default function Carousel() {
             const imageUrl = rawImageUrl ? getImageUrl(rawImageUrl) : null
             return (
               <SwiperSlide key={product._id} className={styles.slide}>
-                <div className={styles.accommodationItem}>
+                <div
+                  className={styles.accommodationItem}
+                  onClick={(e) => onClickProduct(e, product._id)}
+                >
                   <div className={styles.imageWrapper}>
                     {imageUrl ? (
                       <Image

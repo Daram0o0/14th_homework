@@ -22,6 +22,7 @@ import Image from 'next/image'
 import cheongsanImage from '@assets/cheongsan.png'
 import profileImage from '@assets/profile_image.png'
 import useProductsListBinding from './hooks/index.binding.hook'
+import useLinkRouting from './hooks/index.link.routing.hook'
 import Pagination from '../pagination'
 
 const { RangePicker } = DatePicker
@@ -64,10 +65,13 @@ export default function ProductsListComponent() {
   const [currentPage, setCurrentPage] = useState(1)
 
   const { products, loading, error, refetch } = useProductsListBinding({
-    isSoldout: activeTab === 'closed',
+    // 예약 가능 숙소: isSoldout = false
+    // 예약 마감 숙소: isSoldout = true
+    isSoldout: activeTab === 'closed' ? true : false,
     search: searchKeyword || undefined,
     page: currentPage,
   })
+  const { onClickProduct, onClickNewProduct } = useLinkRouting()
 
   // 탭이나 검색어 변경 시 페이지를 1로 리셋
   useEffect(() => {
@@ -146,7 +150,7 @@ export default function ProductsListComponent() {
         </div>
 
         {/* 숙박권 판매하기 버튼 */}
-        <Button variant="primary" size="medium" theme="light">
+        <Button variant="primary" size="medium" theme="light" onClick={onClickNewProduct}>
           <BorderColorOutlined className={styles.icon} />
           숙박권 판매하기
         </Button>
@@ -225,52 +229,60 @@ export default function ProductsListComponent() {
             <div>상품이 없습니다.</div>
           ) : (
             products.map((product) => (
-              <div key={product._id} className={styles.card}>
-                {/* 이미지 영역 */}
-                <div className={styles.cardImageWrapper}>
-                  <Image
-                    src={getImageUrl(product.images?.[0])}
-                    alt={product.name || '숙소 이미지'}
-                    width={296}
-                    height={296}
-                    className={styles.cardImage}
-                  />
-                  <div className={styles.cardBookmark}>
-                    <BookmarkBorder className={styles.bookmarkIcon} />
-                    <span className={styles.bookmarkCount}>{product.pickedCount || 0}</span>
-                  </div>
-                </div>
-                {/* 콘텐츠 영역 */}
-                <div className={styles.cardContent}>
-                  {/* 제목과 설명 */}
-                  <div className={styles.cardTitleSection}>
-                    <div className={styles.cardTitle}>{product.name}</div>
-                    <div className={styles.cardDescription}>{product.contents}</div>
-                  </div>
-                  {/* 태그 */}
-                  {product.tags && product.tags.length > 0 && (
-                    <div className={styles.cardTags}>
-                      {product.tags.map((tag) => `#${tag}`).join(' ')}
+              <div
+                key={product._id}
+                className={styles.card}
+                onClick={(e) => onClickProduct(e, product._id)}
+              >
+                  {/* 이미지 영역 */}
+                  <div className={styles.cardImageWrapper}>
+                    <Image
+                      src={getImageUrl(product.images?.[0])}
+                      alt={product.name || '숙소 이미지'}
+                      width={296}
+                      height={296}
+                      className={styles.cardImage}
+                    />
+                    <div className={styles.cardBookmark}>
+                      <BookmarkBorder className={styles.bookmarkIcon} />
+                      <span className={styles.bookmarkCount}>{product.pickedCount || 0}</span>
                     </div>
-                  )}
-                  {/* 프로필과 가격 */}
-                  <div className={styles.cardFooter}>
-                    <div className={styles.cardProfile}>
-                      <Image
-                        src={getProfileImageUrl(product.seller?.picture)}
-                        alt={product.seller?.name || '프로필 이미지'}
-                        width={24}
-                        height={24}
-                        className={styles.profileImage}
-                      />
-                      <span className={styles.profileName}>{product.seller?.name || '판매자'}</span>
+                  </div>
+                  {/* 콘텐츠 영역 */}
+                  <div className={styles.cardContent}>
+                    {/* 제목과 설명 */}
+                    <div className={styles.cardTitleSection}>
+                      <div className={styles.cardTitle}>{product.name}</div>
+                      <div className={styles.cardDescription}>{product.contents}</div>
                     </div>
-                    {product.price && (
-                      <div className={styles.cardPrice}>
-                        <span className={styles.priceAmount}>{product.price.toLocaleString()}</span>
-                        <span className={styles.priceUnit}>원</span>
+                    {/* 태그 */}
+                    {product.tags && product.tags.length > 0 ? (
+                      <div className={styles.cardTags}>
+                        {product.tags.map((tag) => `#${tag}`).join(' ')}
                       </div>
-                    )}
+                    ) : null}
+                    {/* 프로필과 가격 */}
+                    <div className={styles.cardFooter}>
+                      <div className={styles.cardProfile}>
+                        <Image
+                          src={getProfileImageUrl(product.seller?.picture)}
+                          alt={product.seller?.name || '프로필 이미지'}
+                          width={24}
+                          height={24}
+                          className={styles.profileImage}
+                        />
+                        <span className={styles.profileName}>
+                          {product.seller?.name || '판매자'}
+                        </span>
+                      </div>
+                      {product.price && (
+                        <div className={styles.cardPrice}>
+                          <span className={styles.priceAmount}>
+                            {product.price.toLocaleString()}
+                          </span>
+                          <span className={styles.priceUnit}>원</span>
+                        </div>
+                      )}
                   </div>
                 </div>
               </div>

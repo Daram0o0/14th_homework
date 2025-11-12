@@ -25,7 +25,7 @@
 
             2) 바인딩 API를 적용할 것.
                 1. fetchTravelproducts API
-                    1-1) API명: fetchTravelproductsOfTheBest
+                    1-1) API명: fetchTravelproducts
                     1-2) 요청데이터: 
                     {
                         isSoldout: Boolean
@@ -33,4 +33,20 @@
                         page: Int
                     }
                     1-3) 응답데이터: { [Travelproduct!]! }
+                    1-4) 응답 필드 필수 포함:
+                        - _id
+                        - name
+                        - contents
+                        - images
+                        - pickedCount
+                        - price
+                        - tags (태그 필드 필수 포함)
+                        - seller { _id, name, picture }
+                        - soldAt
+                        - createdAt
+
+            3) isSoldout 필터링 로직
+                - 예약 가능 숙소 탭 (activeTab === 'available'): isSoldout = false
+                - 예약 마감 숙소 탭 (activeTab === 'closed'): isSoldout = true
+                - useProductsListBinding hook에 전달할 때 명확하게 구분할 것
 

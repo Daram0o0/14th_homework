@@ -28,6 +28,8 @@ export const FETCH_TRAVEL_PRODUCTS = gql`
         name
         picture
       }
+      soldAt
+      createdAt
     }
   }
 `

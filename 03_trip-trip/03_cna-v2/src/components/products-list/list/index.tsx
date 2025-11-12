@@ -17,23 +17,68 @@ import {
   BorderColorOutlined,
 } from '@mui/icons-material'
 import { Button } from '@commons/ui'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import cheongsanImage from '@assets/cheongsan.png'
 import profileImage from '@assets/profile_image.png'
 import useProductsListBinding from './hooks/index.binding.hook'
+import Pagination from '../pagination'
 
 const { RangePicker } = DatePicker
+
+const ITEMS_PER_PAGE = 12
+
+// 이미지 URL을 처리하는 유틸리티 함수
+const getImageUrl = (imageUrl: string | null | undefined): string | typeof cheongsanImage => {
+  if (!imageUrl) return cheongsanImage
+  // 이미 절대 URL인 경우 그대로 반환
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl
+  }
+  // 상대 경로인 경우 storage.googleapis.com을 붙여서 반환
+  if (imageUrl.startsWith('/')) {
+    return `https://storage.googleapis.com${imageUrl}`
+  }
+  // 경로만 있는 경우 storage.googleapis.com을 붙여서 반환
+  return `https://storage.googleapis.com/${imageUrl}`
+}
+
+// 프로필 이미지 URL을 처리하는 유틸리티 함수
+const getProfileImageUrl = (imageUrl: string | null | undefined): string | typeof profileImage => {
+  if (!imageUrl) return profileImage
+  // 이미 절대 URL인 경우 그대로 반환
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl
+  }
+  // 상대 경로인 경우 storage.googleapis.com을 붙여서 반환
+  if (imageUrl.startsWith('/')) {
+    return `https://storage.googleapis.com${imageUrl}`
+  }
+  // 경로만 있는 경우 storage.googleapis.com을 붙여서 반환
+  return `https://storage.googleapis.com/${imageUrl}`
+}
 
 export default function ProductsListComponent() {
   const [activeTab, setActiveTab] = useState<'available' | 'closed'>('available')
   const [searchKeyword, setSearchKeyword] = useState<string>('')
+  const [currentPage, setCurrentPage] = useState(1)
 
-  const { products, loading, error } = useProductsListBinding({
+  const { products, loading, error, refetch } = useProductsListBinding({
     isSoldout: activeTab === 'closed',
     search: searchKeyword || undefined,
-    page: 1,
+    page: currentPage,
   })
+
+  // 탭이나 검색어 변경 시 페이지를 1로 리셋
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [activeTab, searchKeyword])
+
+  // lastPage 계산
+  // 현재 페이지의 아이템 수가 ITEMS_PER_PAGE보다 작으면 마지막 페이지로 간주
+  // 실제로는 서버에서 총 개수를 받아와야 하지만, 현재는 이 방식으로 처리
+  const isLastPage = products.length < ITEMS_PER_PAGE && products.length > 0
+  const lastPage = isLastPage ? currentPage : currentPage + 1
 
   return (
     <div className={styles.container}>
@@ -184,7 +229,7 @@ export default function ProductsListComponent() {
                 {/* 이미지 영역 */}
                 <div className={styles.cardImageWrapper}>
                   <Image
-                    src={product.images?.[0] || cheongsanImage}
+                    src={getImageUrl(product.images?.[0])}
                     alt={product.name || '숙소 이미지'}
                     width={296}
                     height={296}
@@ -212,7 +257,7 @@ export default function ProductsListComponent() {
                   <div className={styles.cardFooter}>
                     <div className={styles.cardProfile}>
                       <Image
-                        src={product.seller?.picture || profileImage}
+                        src={getProfileImageUrl(product.seller?.picture)}
                         alt={product.seller?.name || '프로필 이미지'}
                         width={24}
                         height={24}
@@ -232,6 +277,18 @@ export default function ProductsListComponent() {
             ))
           )}
         </div>
+
+        {/* Pagination 영역 */}
+        {!loading && !error && products.length > 0 && (
+          <div className={styles.paginationContainer}>
+            <Pagination
+              refetch={refetch}
+              setCurrentPage={setCurrentPage}
+              currentPage={currentPage}
+              lastPage={lastPage}
+            />
+          </div>
+        )}
       </div>
     </div>
   )

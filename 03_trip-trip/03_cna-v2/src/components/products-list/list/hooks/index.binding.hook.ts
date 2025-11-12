@@ -12,7 +12,7 @@ interface UseProductsListBindingProps {
 }
 
 export default function useProductsListBinding(props?: UseProductsListBindingProps) {
-  const { data, loading, error } = useQuery<
+  const { data, loading, error, refetch } = useQuery<
     FetchTravelproductsQuery,
     FetchTravelproductsQueryVariables
   >(FetchTravelproductsDocument, {
@@ -27,6 +27,7 @@ export default function useProductsListBinding(props?: UseProductsListBindingPro
     products: data?.fetchTravelproducts ?? [],
     loading,
     error,
+    refetch,
   }
 }
 

@@ -1,0 +1,58 @@
+아래의 조건을 모두 적용하여, 아래의 요구사항을 모두 구현할 것.
+구현 결과를 체크리스트로 반환할 것.
+
+==============================================
+
+조건-커서룰) 아래의 커서룰을 적용하여 작업하고, 이 작업이 끝나면 해당 rules 적용 결과를 체크리스트로 반환할 것.
+            - @01-common.mdc
+            - @02-wireframe.mdc
+            - @03-ui.mdc
+
+==============================================
+
+조건-참고) boards-list의 pagination 컴포넌트를 참고하여 구현할 것.
+조건-참고) boards-list/pagination/index.tsx, hook.ts, types.ts, styles.module.css를 참고할 것.
+
+조건-파일경로) 구현될 TSX 파일경로: src/components/products-list/pagination/index.tsx
+조건-파일경로) 구현될 HOOK 파일경로: src/components/products-list/pagination/hook.ts
+조건-파일경로) 구현될 TYPES 파일경로: src/components/products-list/pagination/types.ts
+조건-파일경로) 구현될 CSS 파일경로: src/components/products-list/pagination/styles.module.css
+조건-연결경로) 연결될 TSX 파일경로: src/components/products-list/list/index.tsx 의 리스트 하단 중앙
+
+==============================================
+
+조건-공통목록) 사용할 색상 목록(global.css에 명시된 변수 토큰 활용)
+
+조건-공통목록) 사용할 아이콘/로고/이미지 목록(public/icons or public/images 하위 파일)
+
+조건-공통목록) 라이브러리를 새로 설치하지 말 것.
+
+조건-공통목록) 설치되어 있는 라이브러리만 사용할 것.
+
+조건-공통목록) 설치되어 있는 mui 아이콘을 사용할 것 (KeyboardArrowLeft, KeyboardArrowRight).
+
+==============================================
+[1차 핵심요구사항]
+
+1. 컴포넌트 구성
+  - pagination 컴포넌트는 리스트 하단 중앙에 위치할 것
+  - 좌우 화살표 버튼과 페이지 번호 버튼으로 구성
+  - 페이지 그룹은 5개씩 표시
+  - 현재 페이지는 활성화 스타일 적용
+
+2. 스타일 요구사항
+  - 중앙 정렬 (justify-content: center)
+  - 화살표 아이콘: 24px 크기, 색상 #333333
+  - 비활성화된 화살표: 색상 #c7c7c7, cursor: default
+  - 페이지 번호 버튼: 32px x 32px, 색상 #777
+  - 활성화된 페이지: 배경색 #f2f2f2, 색상 #000, font-weight: 500
+  - 페이지 번호 간격: 16px
+  - 화살표와 페이지 번호 간격: 8px
+
+3. 기능 요구사항
+  - 이전/다음 페이지 그룹 이동 (5개씩)
+  - 특정 페이지 번호 클릭 시 해당 페이지로 이동
+  - 첫 페이지 그룹에서는 왼쪽 화살표 비활성화
+  - 마지막 페이지 그룹에서는 오른쪽 화살표 비활성화
+  - 페이지 변경 시 refetch를 통해 데이터 갱신
+

@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 폰트 로드 (스토리북에서도 사용하기 위해 @font-face로 정의) */
+@font-face {
+  font-family: 'Pretendard Variable';
+  src: url('./fonts/PretendardVariable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -23,6 +32,10 @@
   /* Main colors */
   --color-main: #2974e5;
   --color-red: #f66a6a;
+
+  /* Font Variable (Next.js localFont에서 설정되거나, 스토리북에서는 폴백) */
+  --font-pretendard: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
+    sans-serif;
 
   /* Typography Token System - Font Families */
   --font-family-korean: var(--font-pretendard), Pretendard, -apple-system, BlinkMacSystemFont,

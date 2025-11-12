@@ -1,6 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* CSS 변수는 @commons/ui의 globals.css에서 import됨 */
+
 * {
   margin: 0px;
   padding: 0px;
@@ -14,6 +17,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  color: var(--foreground);
+  background: var(--background);
 }
 
 /* :root {

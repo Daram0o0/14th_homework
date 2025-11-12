@@ -1,0 +1,234 @@
+/**
+ * Modal Styles
+ * 
+ * Figma 참고 노드 ID:
+ * - 참고할 모든 모달 컴포넌트 노드ID: 99:15030, 99:15187, 13051:11617, 13051:11664, 13051:11634, 13051:11664, 13051:11680
+ */
+
+/* Portal (Backdrop) */
+.portal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Modal Base */
+.modal {
+  background: var(--color-gray-w);
+  border-radius: 16px;
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  font-family: var(--font-family-korean);
+}
+
+/* Size Variants */
+.modal.s {
+  width: 480px;
+  height: auto;
+  padding: 24px;
+  gap: 20px;
+}
+
+.modal.m {
+  width: 480px;
+  height: auto;
+  padding: 32px;
+  gap: 24px;
+}
+
+/* Variant Colors */
+.modal.info {
+  border-top: 4px solid var(--color-main);
+}
+
+.modal.danger {
+  border-top: 4px solid var(--color-red);
+}
+
+/* Title */
+.title {
+  margin: 0;
+  color: var(--color-gray-B);
+  text-align: center;
+  font-family: var(--font-family-korean);
+  flex-shrink: 0;
+}
+
+.modal.s .title {
+  font-size: var(--typo-title01-font-size);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--typo-title01-line-height);
+}
+
+.modal.m .title {
+  font-size: var(--typo-headline01-font-size);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--typo-headline01-line-height);
+}
+
+/* Dropdown */
+.dropdown {
+  background: var(--color-gray-w);
+  border: 1px solid var(--color-gray-200);
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-family: var(--font-family-korean);
+  font-size: var(--typo-body01-font-size);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--typo-body01-line-height);
+  color: var(--color-gray-B);
+  flex-shrink: 0;
+  transition: all 0.2s;
+  margin: 0 auto;
+}
+
+.dropdown:hover {
+  border-color: var(--color-gray-400);
+}
+
+.dropdown:focus {
+  outline: none;
+  border-color: var(--color-main);
+}
+
+.dropdown svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--color-gray-600);
+  transition: color 0.2s;
+}
+
+.dropdown:hover svg {
+  color: var(--color-gray-B);
+}
+
+/* 일러스트 */
+.illustWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.illust {
+  width: auto;
+  height: auto;
+  display: block;
+}
+
+/* 로고 */
+.logoWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.logo {
+  display: block;
+  flex-shrink: 0;
+}
+
+.modal.s .logo {
+  width: 77.3px;
+  height: 48px;
+}
+
+.modal.m .logo {
+  width: 115.922px;
+  height: 72px;
+}
+
+.description {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-family-korean);
+  flex-shrink: 0;
+}
+
+.modal.s .description {
+  color: var(--color-gray-800);
+  font-size: var(--typo-body02-s-font-size);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--typo-body02-s-line-height);
+}
+
+.modal.m .description {
+  color: var(--color-gray-800);
+  font-size: var(--typo-headline03-font-size);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--typo-body01-line-height);
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+  margin-top: auto;
+  width: 100%;
+  justify-content: center;
+}
+
+.actions.single .button {
+  width: 180px;
+  height: 48px;
+}
+
+.modal.s .actions.single .button {
+  width: 120px;
+  height: 40px;
+}
+
+.actions.dual .button {
+  width: calc(50% - 6px);
+}
+
+.modal.m .actions.dual .button {
+  max-width: 180px;
+  height: 48px;
+}
+
+.modal.s .actions.dual .button {
+  max-width: 120px;
+  height: 40px;
+}
+
+.button {
+  flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .modal.s,
+  .modal.m {
+    width: calc(100vw - 32px);
+    max-width: 100%;
+  }
+
+  .modal.s {
+    padding: 20px;
+    gap: 16px;
+  }
+
+  .modal.m {
+    padding: 24px;
+    gap: 20px;
+  }
+}

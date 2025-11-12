@@ -1,0 +1,79 @@
+아래의 조건을 모두 적용하여, 아래의 요구사항을 모두 구현할 것.
+구현 결과를 체크리스트로 반환할 것.
+
+==============================================
+
+조건-커서룰) 아래의 커서룰을 적용하여 작업하고, 이 작업이 끝나면 해당 rules 적용 결과를 체크리스트로 반환할 것.
+            - @01-common.mdc
+            - @02-wireframe.mdc
+            - @03-ui.mdc
+
+==============================================
+
+조건-피그마) 활용할MCP: CursorTalkToFigmaMCP(채널명: 7h3ihc77)
+조건-피그마) 참고한 모달컴포넌트 모음 노드ID: 13051:11907
+조건-피그마) 참고할 모달 컴포넌트 모음2 노드ID: 99:15186
+조건-피그마) 참고할 모든 모달 컴포넌트 노드ID: 99:15030, 99:15187, 13051:11617, 13051:11664, 13051:11634, 13051:11664, 13051:11680
+조건-파일경로) 구현될 TSX 파일경로: src/modal/index.tsx
+조건-파일경로) 구현될 CSS 파일경로: src/modal/styles.module.css
+
+==============================================
+[1차 핵심요구사항]
+
+핵심요구사항) MCP를 연동하여 피그마의 디자인을 그대로 소스코드로 구현할 것.
+                - 스토리북은 생성하지 말 것.
+                - 기존의 공통컴포넌트와 스타일일관성을 통일할 것
+                - modal.provider와 함께 사용할 것이므로, 자체 backdrop 스타일을 생성하지 말 것.
+
+핵심요구사항) 다음 조건을 모두 만족하는 완전한 variant 시스템을 구현할 것.
+                - variant: 'info' | 'danger'
+                - actions: 'single' | 'dual'
+                - description: boolean
+                - logo: boolean
+                - illust: boolean
+                - size: 's' | 'm'
+                - dropdown: boolean
+
+핵심요구사항) 모달에 사용될 <Button /> 공통컴포넌트는 다음의 규칙을 지켜 step-by-step 으로 구현하고, 적용 결과를 체크리스트로 반환할 것.
+                1) 모달에 사용될 <Button /> 공통컴포넌트 원본을 수정하지 말고, 아래의 props만 활용할 것.
+                    - size: 피그마와 일치할 것.
+                    - className 전달: width만 허용할 것.
+
+                2) 적용될 공통컴포넌트 목록을 구현할 것.
+                    - 확인: <Button />
+                    - 취소: <Button />
+                
+                3) 버튼 크기 규격:
+                    - m 사이즈 모달: 버튼 180px * 48px
+                    - s 사이즈 모달: 버튼 120px * 40px
+                
+                4) 로고의 경우 public 내부의 triptrip.svg를 사용할 것
+                5) 일러스트의 경우 public 내부의 pointIllust.svg를 사용할 것
+
+핵심요구사항) 모달 내부 요소의 배치 순서는 다음과 같이 구현할 것.
+                - 위에서 아래로: 일러스트 - 타이틀 - 드롭다운 - 디스크립션 - 로고 - 버튼
+                - 로고는 한 개만 표시할 것.
+                - 타이틀과 디스크립션의 폰트 굵기와 크기는 다르게 구현할 것.
+                - 타이틀과 드롭다운은 확실하게 분리된 별도의 요소로 구현할 것.
+
+핵심요구사항) 모달 크기 및 타이폴 스타일 규격:
+                - s 사이즈 모달:
+                    - 모달 크기: width 480px, height auto
+                    - 타이틀: color #000, text-align center, font-family "Pretendard Variable", font-size 18px, font-weight 600, line-height 24px
+                    - 디스크립션: color #333, text-align center, font-family "Pretendard Variable", font-size 14px, font-weight 500, line-height 20px
+                    - 로고 크기: 77.3px * 48px
+                
+                - m 사이즈 모달:
+                    - 모달 크기: width 480px, height auto
+                    - 타이틀: color #000, text-align center, font-family Pretendard, font-size 24px, font-weight 700, line-height 32px
+                    - 디스크립션: color #333, text-align center, font-family "Pretendard Variable", font-size 20px, font-weight 500, line-height 24px
+                    - 로고 크기: 115.922px * 72px
+
+핵심요구사항) 이미 정의해둔 constants(color.ts, typography.ts, globals.css)를 최대한 참고하여 css를 작성할 것.
+                - color.ts의 색상 상수를 var(--color-*) 형태로 사용할 것.
+                - typography.ts의 타이포그래피 토큰을 var(--typo-*) 형태로 사용할 것.
+                - global.css에 정의된 CSS 변수를 우선적으로 활용할 것.
+                - 폰트 패밀리는 var(--font-family-korean)을 사용할 것.
+                - 폰트 웨이트는 var(--font-weight-*) 형태로 사용할 것.
+
+핵심요구사항) 이미 설치된 라이브러리만을 사용하여 구현할 것. 라이브러리를 직접 설치하지 말 것.

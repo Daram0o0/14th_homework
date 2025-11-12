@@ -1,8 +1,10 @@
 // 'use client'
 import './globals.css'
+import '@commons/ui/src/app/globals.css'
 import localFont from 'next/font/local'
 import { Inter } from 'next/font/google'
 import ApiProvider from 'commons/settings/apollo-setting'
+import { ModalProvider } from '@commons/ui'
 // import Layout from 'commons/layout'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -26,7 +28,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko">
       <body className={`${pretendard.variable} ${inter.className}`}>
-        <ApiProvider>{children}</ApiProvider>
+        <ApiProvider>
+          <ModalProvider>{children}</ModalProvider>
+        </ApiProvider>
       </body>
     </html>
   )

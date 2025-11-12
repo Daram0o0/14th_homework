@@ -1,3 +1,4 @@
+// AuthGuard로 인해 사용하지 않는 코드
 import { isTokenExpired } from 'commons/utils/auth'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef } from 'react'

@@ -1,5 +1,6 @@
 'use client'
 import { isTokenExpired } from 'commons/utils/auth'
+import { useAuthExpiryStore } from 'commons/stores/auth-expiry-store'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
@@ -16,19 +17,19 @@ export const useRequireAuth = () => {
 
 export const useCheckTokenExpired = () => {
   const router = useRouter()
+  const { handleTokenExpiry } = useAuthExpiryStore()
   useEffect(() => {
     const token = localStorage.getItem('accessToken') ?? undefined
     if (!token) return
     if (isTokenExpired(token)) {
-      alert('로그인이 만료되었습니다. 로그인 후 다시 서비스를 이용해주세요.')
-      localStorage.removeItem('accessToken')
-      router.replace('/login')
+      handleTokenExpiry()
     }
-  }, [router])
+  }, [router, handleTokenExpiry])
 }
 
 export function useAuthGuard() {
   const router = useRouter()
+  const { handleTokenExpiry } = useAuthExpiryStore()
   const firedRef = useRef(false)
   useEffect(() => {
     if (firedRef.current) return
@@ -41,11 +42,9 @@ export function useAuthGuard() {
       return
     }
     if (isTokenExpired(token)) {
-      alert('로그인이 만료되었습니다. 로그인 후 다시 이용해주세요.')
-      localStorage.removeItem('accessToken')
-      router.push('/login')
+      handleTokenExpiry()
     }
-  }, [router])
+  }, [router, handleTokenExpiry])
 }
 
 export function useAuthStatus() {

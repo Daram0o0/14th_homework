@@ -1,0 +1,64 @@
+/* 로그인 만료 모달 스타일 */
+.loginExpiredModal {
+  z-index: 2000;
+}
+
+.modalContent {
+  text-align: center;
+  padding: 24px;
+}
+
+.iconContainer {
+  margin-bottom: 20px;
+}
+
+.warningIcon {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.modalTitle {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 32px;
+  color: #000000;
+  margin: 0 0 16px 0;
+}
+
+.modalMessage {
+  font-family: 'Pretendard Variable', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #666666;
+  margin: 0 0 32px 0;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.confirmButton {
+  padding: 12px 32px;
+  border: none;
+  border-radius: 8px;
+  background-color: #1677ff;
+  color: white;
+  font-family: 'Pretendard Variable', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 180px;
+}
+
+.confirmButton:hover {
+  background-color: #4096ff;
+  transform: translateY(-1px);
+}
+
+.confirmButton:active {
+  transform: translateY(0);
+}

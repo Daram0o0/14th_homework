@@ -7,6 +7,7 @@ import ApiProvider from 'commons/settings/apollo-setting'
 import { ModalProvider } from '@commons/ui'
 import { AuthProvider } from 'commons/providers/auth/auth.provider'
 import { AuthGuard } from 'commons/providers/auth/auth.guard'
+import LoginExpiredModal from 'components/auth/login-expired-modal'
 // import Layout from 'commons/layout'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ApiProvider>
             <ModalProvider>
               <AuthGuard>{children}</AuthGuard>
+              <LoginExpiredModal />
             </ModalProvider>
           </ApiProvider>
         </AuthProvider>

@@ -1,5 +1,6 @@
 // AuthGuard로 인해 사용하지 않는 코드
 import { isTokenExpired } from 'commons/utils/auth'
+import { useAuthExpiryStore } from 'commons/stores/auth-expiry-store'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef } from 'react'
 
@@ -7,6 +8,7 @@ export const withAuth =
   <P extends object>(컴포넌트: React.ComponentType<P>) =>
   (props: P) => {
     const router = useRouter()
+    const { handleTokenExpiry } = useAuthExpiryStore()
     const firedRef = useRef(false)
     useEffect(() => {
       if (firedRef.current) return
@@ -19,11 +21,9 @@ export const withAuth =
         return
       }
       if (isTokenExpired(token)) {
-        alert('로그인이 만료되었습니다. 로그인 후 다시 이용해주세요.')
-        localStorage.removeItem('accessToken')
-        router.push('/login')
+        handleTokenExpiry()
       }
-    }, [router])
+    }, [router, handleTokenExpiry])
     const token =
       typeof window !== 'undefined' ? localStorage.getItem('accessToken') ?? undefined : undefined
     if (!token) return null

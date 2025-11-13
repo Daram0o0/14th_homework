@@ -4,6 +4,7 @@ import { ApolloClient, ApolloProvider, InMemoryCache, from } from '@apollo/clien
 import { onError } from '@apollo/client/link/error'
 import createUploadLink from 'apollo-upload-client/createUploadLink.mjs'
 import { useAccessTokenStore } from 'commons/stores/access-token-store'
+import { useAuthExpiryStore } from 'commons/stores/auth-expiry-store'
 import { useEffect } from 'react'
 
 interface IApolloSetting {
@@ -12,6 +13,7 @@ interface IApolloSetting {
 
 export default function ApiProvider({ children }: IApolloSetting) {
   const { accessToken, setAccessToken } = useAccessTokenStore()
+  const { handleTokenExpiry } = useAuthExpiryStore()
 
   useEffect(() => {
     const result = localStorage.getItem('accessToken')
@@ -24,19 +26,9 @@ export default function ApiProvider({ children }: IApolloSetting) {
       graphQLErrors.forEach(({ extensions }) => {
         // UNAUTHENTICATED 에러 감지 (토큰 만료)
         if (extensions?.code === 'UNAUTHENTICATED') {
-          // 토큰 제거
-          if (typeof window !== 'undefined') {
-            localStorage.removeItem('accessToken')
-            setAccessToken('')
-
-            // 사용자에게 알림
-            alert('로그인이 만료되었습니다. 다시 로그인해주세요.')
-
-            // 로그인 페이지로 리다이렉트 (현재 페이지가 로그인 페이지가 아닌 경우에만)
-            if (window.location.pathname !== '/login') {
-              window.location.href = '/login'
-            }
-          }
+          // 중앙 집중식 토큰 만료 처리
+          setAccessToken('')
+          handleTokenExpiry()
         }
       })
     }

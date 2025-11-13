@@ -40,10 +40,57 @@ export const TOGGLE_TRAVEL_PRODUCT_PICK = gql`
   }
 `
 
+export const FETCH_TRAVEL_PRODUCT = gql`
+  query fetchTravelproduct($travelproductId: ID!) {
+    fetchTravelproduct(travelproductId: $travelproductId) {
+      _id
+      name
+      remarks
+      contents
+      price
+      tags
+      images
+      pickedCount
+      travelproductAddress {
+        _id
+        address
+        addressDetail
+        lat
+        lng
+        zipcode
+      }
+      seller {
+        _id
+        name
+        picture
+      }
+      soldAt
+      createdAt
+      updatedAt
+    }
+  }
+`
+
 export const FETCH_TRAVEL_PRODUCTS_I_PICKED = gql`
   query fetchTravelproductsIPicked {
     fetchTravelproductsIPicked {
       _id
+    }
+  }
+`
+
+export const DELETE_TRAVEL_PRODUCT = gql`
+  mutation deleteTravelproduct($travelproductId: ID!) {
+    deleteTravelproduct(travelproductId: $travelproductId)
+  }
+`
+
+export const FETCH_USER_LOGGED_IN = gql`
+  query fetchUserLoggedIn {
+    fetchUserLoggedIn {
+      _id
+      email
+      name
     }
   }
 `

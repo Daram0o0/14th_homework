@@ -9,38 +9,151 @@ import {
 import Image from 'next/image'
 import cheongsanImage from '@assets/cheongsan.png'
 import profileImage from '@assets/profiles/profile5.webp'
-import { Map, useKakaoLoader } from 'react-kakao-maps-sdk'
+import { Map, MapMarker, useKakaoLoader } from 'react-kakao-maps-sdk'
 import { Button } from '@commons/ui'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
 import type { Swiper as SwiperType } from 'swiper'
 import 'swiper/css'
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
+import { Tooltip } from 'antd'
+import useProductsDetailBinding from './hooks/index.binding.hook'
 
 interface ProductsDetailComponentProps {
   onTabChange?: (tab: 'detail' | 'qna') => void
 }
 
+// 이미지 URL을 처리하는 유틸리티 함수
+const getImageUrl = (imageUrl: string | null | undefined): string | typeof cheongsanImage => {
+  if (!imageUrl) return cheongsanImage
+  // 이미 절대 URL인 경우 그대로 반환
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl
+  }
+  // 상대 경로인 경우 storage.googleapis.com을 붙여서 반환
+  if (imageUrl.startsWith('/')) {
+    return `https://storage.googleapis.com${imageUrl}`
+  }
+  // 경로만 있는 경우 storage.googleapis.com을 붙여서 반환
+  return `https://storage.googleapis.com/${imageUrl}`
+}
+
+// 프로필 이미지 URL을 처리하는 유틸리티 함수
+const getProfileImageUrl = (imageUrl: string | null | undefined): string | typeof profileImage => {
+  if (!imageUrl) return profileImage
+  // 이미 절대 URL인 경우 그대로 반환
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl
+  }
+  // 상대 경로인 경우 storage.googleapis.com을 붙여서 반환
+  if (imageUrl.startsWith('/')) {
+    return `https://storage.googleapis.com${imageUrl}`
+  }
+  // 경로만 있는 경우 storage.googleapis.com을 붙여서 반환
+  return `https://storage.googleapis.com/${imageUrl}`
+}
+
 export default function ProductsDetailComponent({ onTabChange }: ProductsDetailComponentProps) {
   useKakaoLoader({ appkey: process.env.NEXT_PUBLIC_KAKAO_MAP_APPKEY || '', libraries: [] })
 
-  // 포항 좌표 (임시, 실제 데이터로 교체 필요)
-  const mapCenter = { lat: 36.0322, lng: 129.365 }
+  const {
+    product,
+    loading,
+    error,
+    isToggling,
+    isDeleting,
+    isDeleteModalOpen,
+    isOwner,
+    handleToggle,
+    handleCopyLink,
+    handleOpenDeleteModal,
+    handleCloseDeleteModal,
+    handleConfirmDelete,
+  } = useProductsDetailBinding()
 
-  // 썸네일 이미지 목록 (임시 데이터, 실제 데이터로 교체 필요)
-  const thumbnailImages = [
-    { src: cheongsanImage, alt: '썸네일 1' },
-    { src: cheongsanImage, alt: '썸네일 2' },
-    { src: cheongsanImage, alt: '썸네일 3' },
-    { src: cheongsanImage, alt: '썸네일 4' },
-    { src: cheongsanImage, alt: '썸네일 5' },
-    { src: cheongsanImage, alt: '썸네일 6' },
-    { src: cheongsanImage, alt: '썸네일 7' },
-    { src: cheongsanImage, alt: '썸네일 8' },
-  ]
+  const [mainImageIndex, setMainImageIndex] = useState(0)
 
   const swiperRef = useRef<SwiperType | null>(null)
   const thumbnailContainerRef = useRef<HTMLDivElement>(null)
+
+  // 이미지 목록 처리
+  const images = product?.images || []
+  const thumbnailImages = images.length > 0 ? images : []
+  const mainImage = thumbnailImages[mainImageIndex] || null
+
+  // 지도 좌표 처리 (우선순위: address > lat/lng > zipcode)
+  const getMapLocation = () => {
+    const address = product?.travelproductAddress
+    if (!address) return { lat: 36.0322, lng: 129.365, hasLocation: false }
+
+    // 1순위: address가 있는 경우
+    if (address.address) {
+      // 주소가 있으면 lat, lng도 함께 있을 것으로 가정
+      return {
+        lat: address.lat || 36.0322,
+        lng: address.lng || 129.365,
+        hasLocation: true,
+        locationInfo: address.address,
+      }
+    }
+
+    // 2순위: lat, lng가 있는 경우
+    if (address.lat && address.lng) {
+      return {
+        lat: address.lat,
+        lng: address.lng,
+        hasLocation: true,
+        locationInfo: `위도: ${address.lat}, 경도: ${address.lng}`,
+      }
+    }
+
+    // 3순위: zipcode가 있는 경우
+    if (address.zipcode) {
+      // zipcode만 있는 경우 기본 좌표 사용하고 마커 표시
+      return {
+        lat: 36.0322,
+        lng: 129.365,
+        hasLocation: true,
+        locationInfo: `우편번호: ${address.zipcode}`,
+      }
+    }
+
+    return { lat: 36.0322, lng: 129.365, hasLocation: false }
+  }
+
+  const mapLocation = getMapLocation()
+  const mapCenter = { lat: mapLocation.lat, lng: mapLocation.lng }
+
+  // 툴팁에 표시할 주소 정보 가져오기
+  const getTooltipAddress = () => {
+    const address = product?.travelproductAddress
+    if (!address) return ''
+
+    // 1순위: address가 있으면 해당 주소를 표시
+    if (address.address) {
+      return address.address
+    }
+
+    // 2순위: lat, lng가 있으면 좌표를 표시
+    if (address.lat && address.lng) {
+      return `위도: ${address.lat}, 경도: ${address.lng}`
+    }
+
+    // 3순위: zipcode가 있으면 우편번호를 표시
+    if (address.zipcode) {
+      return `우편번호: ${address.zipcode}`
+    }
+
+    return ''
+  }
+
+  const tooltipAddress = getTooltipAddress()
+
+  // 가격 포맷팅
+  const formattedPrice = product?.price ? product.price.toLocaleString() : '0'
+
+  // 태그 포맷팅
+  const formattedTags = product?.tags ? `#${product.tags.join(' #')}` : ''
 
   // 스크롤 이벤트 핸들러
   useEffect(() => {
@@ -76,6 +189,23 @@ export default function ProductsDetailComponent({ onTabChange }: ProductsDetailC
     }
   }, [])
 
+  // 로딩 및 에러 처리
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <div>로딩 중...</div>
+      </div>
+    )
+  }
+
+  if (error || !product) {
+    return (
+      <div className={styles.container}>
+        <div>상품을 찾을 수 없습니다.</div>
+      </div>
+    )
+  }
+
   return (
     <div className={styles.container}>
       {/* 탭 영역 (1280 x 49) */}
@@ -95,25 +225,40 @@ export default function ProductsDetailComponent({ onTabChange }: ProductsDetailC
       {/* 헤더 영역 */}
       <div className={styles.header}>
         <div className={styles.titleRow}>
-          <h1 className={styles.title}>포항 : 숙박권 명이 여기에 들어갑니다</h1>
+          <h1 className={styles.title}>{product.name}</h1>
           <div className={styles.iconButtons}>
-            <button className={styles.iconButton}>
-              <DeleteOutlined />
-            </button>
-            <button className={styles.iconButton}>
+            {isOwner && (
+              <button
+                className={styles.iconButton}
+                onClick={handleOpenDeleteModal}
+                disabled={isDeleting}
+                title="삭제"
+              >
+                <DeleteOutlined />
+              </button>
+            )}
+            <button className={styles.iconButton} onClick={handleCopyLink} title="링크 복사">
               <LinkOutlined />
             </button>
-            <button className={styles.iconButton}>
-              <PlaceOutlined />
-            </button>
-            <button className={styles.bookmarkButton}>
+            <Tooltip
+              placement="bottomRight"
+              title={tooltipAddress}
+              arrow={false}
+              color="white"
+              overlayInnerStyle={{ color: 'black' }}
+            >
+              <button className={styles.iconButton} title="위치">
+                <PlaceOutlined />
+              </button>
+            </Tooltip>
+            <button className={styles.bookmarkButton} onClick={handleToggle} disabled={isToggling}>
               <BookmarkBorderOutlined />
-              <span className={styles.bookmarkCount}>24</span>
+              <span className={styles.bookmarkCount}>{product.pickedCount || 0}</span>
             </button>
           </div>
         </div>
-        <p className={styles.subtitle}>모던한 분위기의 감도높은 숙소</p>
-        <p className={styles.tags}>#6인 이하 #건식 사우나 #애견동반 가능</p>
+        <p className={styles.subtitle}>{product.remarks || ''}</p>
+        {formattedTags && <p className={styles.tags}>{formattedTags}</p>}
       </div>
 
       {/* gap (1280 x 40) */}
@@ -125,7 +270,7 @@ export default function ProductsDetailComponent({ onTabChange }: ProductsDetailC
         <div className={styles.imageGallery}>
           <div className={styles.mainImage}>
             <Image
-              src={cheongsanImage}
+              src={mainImage ? getImageUrl(mainImage) : cheongsanImage}
               alt="메인 이미지"
               width={640}
               height={480}
@@ -133,36 +278,59 @@ export default function ProductsDetailComponent({ onTabChange }: ProductsDetailC
             />
           </div>
           <div className={styles.thumbnailContainer} ref={thumbnailContainerRef}>
-            <Swiper
-              direction="vertical"
-              slidesPerView={3.2}
-              spaceBetween={16}
-              autoplay={{
-                delay: 3000,
-                disableOnInteraction: false,
-                pauseOnMouseEnter: true,
-              }}
-              loop={true}
-              modules={[Autoplay]}
-              className={styles.thumbnailSwiper}
-              onSwiper={(swiper) => {
-                swiperRef.current = swiper
-              }}
-            >
-              {thumbnailImages.map((image, index) => (
-                <SwiperSlide key={index} className={styles.thumbnailSlide}>
-                  <div className={styles.thumbnail}>
-                    <Image
-                      src={image.src}
-                      alt={image.alt}
-                      width={180}
-                      height={136}
-                      className={styles.thumbnailImage}
-                    />
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
+            {thumbnailImages.length > 0 ? (
+              <Swiper
+                direction="vertical"
+                slidesPerView={3.2}
+                spaceBetween={16}
+                autoplay={{
+                  delay: 3000,
+                  disableOnInteraction: false,
+                  pauseOnMouseEnter: true,
+                }}
+                loop={thumbnailImages.length > 3}
+                modules={[Autoplay]}
+                className={styles.thumbnailSwiper}
+                onSwiper={(swiper) => {
+                  swiperRef.current = swiper
+                }}
+                onSlideChange={(swiper) => {
+                  setMainImageIndex(swiper.realIndex)
+                }}
+              >
+                {thumbnailImages.map((image, index) => (
+                  <SwiperSlide key={index} className={styles.thumbnailSlide}>
+                    <div
+                      className={styles.thumbnail}
+                      onClick={() => {
+                        setMainImageIndex(index)
+                        swiperRef.current?.slideTo(index)
+                      }}
+                    >
+                      <Image
+                        src={getImageUrl(image)}
+                        alt={`썸네일 ${index + 1}`}
+                        width={180}
+                        height={136}
+                        className={`${styles.thumbnailImage} ${
+                          index === mainImageIndex ? styles.active : styles.inactive
+                        }`}
+                      />
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            ) : (
+              <div className={styles.thumbnail}>
+                <Image
+                  src={cheongsanImage}
+                  alt="썸네일"
+                  width={180}
+                  height={136}
+                  className={`${styles.thumbnailImage} ${styles.active}`}
+                />
+              </div>
+            )}
             <div className={styles.gradientOverlay}></div>
           </div>
         </div>
@@ -172,7 +340,7 @@ export default function ProductsDetailComponent({ onTabChange }: ProductsDetailC
           <div className={styles.purchaseCard}>
             <div className={styles.priceSection}>
               <div className={styles.priceRow}>
-                <span className={styles.price}>32,500</span>
+                <span className={styles.price}>{formattedPrice}</span>
                 <span className={styles.priceUnit}>원</span>
               </div>
               <div className={styles.descriptionSection}>
@@ -196,13 +364,13 @@ export default function ProductsDetailComponent({ onTabChange }: ProductsDetailC
               <h3 className={styles.sellerTitle}>판매자</h3>
               <div className={styles.sellerProfile}>
                 <Image
-                  src={profileImage}
+                  src={getProfileImageUrl(product.seller?.picture)}
                   alt="판매자 프로필"
                   width={40}
                   height={40}
                   className={styles.sellerImage}
                 />
-                <span className={styles.sellerName}>김상훈</span>
+                <span className={styles.sellerName}>{product.seller?.name || ''}</span>
               </div>
             </div>
           </div>
@@ -221,47 +389,7 @@ export default function ProductsDetailComponent({ onTabChange }: ProductsDetailC
       {/* 내용 영역 (844 x auto) */}
       <div className={styles.contentArea}>
         <h2 className={styles.contentTitle}>상세 설명</h2>
-        <p className={styles.contentText}>
-          살어리 살어리랏다 쳥산(靑山)애 살어리랏다 멀위랑 ᄃᆞ래랑 먹고 쳥산(靑山)애 살어리랏다
-          얄리얄리 얄랑셩 얄라리 얄라 우러라 우러라 새여 자고 니러 우러라 새여 널라와 시름 한 나도
-          자고 니러 우니로라 리얄리 얄라셩 얄라리 얄라 가던 새 가던 새 본다 믈 아래 가던 새 본다
-          잉무든 장글란 가지고 믈 아래 가던 새 본다 얄리얄리 얄라셩 얄라리 얄라
-          <br />
-          <br />
-          이링공 뎌링공 ᄒᆞ야 나즈란 디내와손뎌
-          <br />
-          오리도 가리도 업슨 바므란 ᄯᅩ 엇디 호리라
-          <br />
-          얄리얄리 얄라셩 얄라리 얄라
-          <br />
-          <br />
-          어듸라 더디던 돌코 누리라 마치던 돌코
-          <br />
-          믜리도 괴리도 업시 마자셔 우니노라
-          <br />
-          얄리얄리 얄라셩 얄라리 얄라
-          <br />
-          <br />
-          살어리 살어리랏다 바ᄅᆞ래 살어리랏다
-          <br />
-          ᄂᆞᄆᆞ자기 구조개랑 먹고 바ᄅᆞ래 살어리랏다
-          <br />
-          얄리얄리 얄라셩 얄라리 얄라
-          <br />
-          <br />
-          가다가 가다가 드로라 에졍지 가다가 드로라
-          <br />
-          사ᄉᆞ미 지ᇝ대예 올아셔 ᄒᆡ금(奚琴)을 혀거를 드로라
-          <br />
-          얄리얄리 얄라셩 얄라리 얄라
-          <br />
-          <br />
-          가다니 ᄇᆡ브른 도긔 설진 강수를 비조라
-          <br />
-          조롱곳 누로기 ᄆᆡ와 잡ᄉᆞ와니 내 엇디 ᄒᆞ리잇고
-          <br />
-          얄리얄리 얄라셩 얄라리 얄라
-        </p>
+        <p className={styles.contentText}>{product.contents || ''}</p>
       </div>
 
       {/* gap (1280 x 40) */}
@@ -282,9 +410,43 @@ export default function ProductsDetailComponent({ onTabChange }: ProductsDetailC
             level={3}
             className={styles.kakaoMap}
             style={{ width: '100%', height: '100%' }}
-          />
+          >
+            {mapLocation.hasLocation && (
+              <MapMarker position={mapCenter} title={mapLocation.locationInfo} />
+            )}
+          </Map>
         </div>
       </div>
+
+      {/* 삭제 확인 모달 */}
+      {isDeleteModalOpen && (
+        <div className={styles.modalOverlay} onClick={handleCloseDeleteModal}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <h3 className={styles.modalTitle}>상품 삭제</h3>
+            <p className={styles.modalMessage}>
+              정말로 이 상품을 삭제하시겠습니까?
+              <br />
+              삭제된 상품은 복구할 수 없습니다.
+            </p>
+            <div className={styles.modalButtons}>
+              <button
+                className={styles.modalCancelButton}
+                onClick={handleCloseDeleteModal}
+                disabled={isDeleting}
+              >
+                취소
+              </button>
+              <button
+                className={styles.modalDeleteButton}
+                onClick={handleConfirmDelete}
+                disabled={isDeleting}
+              >
+                {isDeleting ? '삭제 중...' : '삭제'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

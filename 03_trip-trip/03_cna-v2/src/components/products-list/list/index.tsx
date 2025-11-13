@@ -14,6 +14,7 @@ import {
   BeachAccessOutlined,
   YardOutlined,
   BookmarkBorder,
+  Bookmark,
   BorderColorOutlined,
 } from '@mui/icons-material'
 import { Button } from '@commons/ui'
@@ -23,6 +24,14 @@ import cheongsanImage from '@assets/cheongsan.png'
 import profileImage from '@assets/profile_image.png'
 import useProductsListBinding from './hooks/index.binding.hook'
 import useLinkRouting from './hooks/index.link.routing.hook'
+import useToggleTravelproductPick from './hooks/index.toggle.hook'
+import { useAuth } from 'commons/providers/auth/auth.provider'
+import { useQuery } from '@apollo/client'
+import {
+  FetchUserLoggedInDocument,
+  FetchUserLoggedInQuery,
+  FetchUserLoggedInQueryVariables,
+} from 'commons/graphql/graphql'
 import Pagination from '../pagination'
 
 const { RangePicker } = DatePicker
@@ -59,10 +68,49 @@ const getProfileImageUrl = (imageUrl: string | null | undefined): string | typeo
   return `https://storage.googleapis.com/${imageUrl}`
 }
 
+// localStorage에서 사용자별 토글 상태를 가져오는 함수
+const getPickedProductsFromStorage = (userId: string | null): Set<string> => {
+  if (typeof window === 'undefined' || !userId) return new Set()
+  try {
+    const key = `pickedProducts_${userId}`
+    const stored = localStorage.getItem(key)
+    if (!stored) return new Set()
+    const productIds = JSON.parse(stored) as string[]
+    return new Set(productIds)
+  } catch {
+    return new Set()
+  }
+}
+
+// localStorage에 사용자별 토글 상태를 저장하는 함수
+const savePickedProductsToStorage = (userId: string | null, productIds: Set<string>) => {
+  if (typeof window === 'undefined' || !userId) return
+  try {
+    const key = `pickedProducts_${userId}`
+    const productIdsArray = Array.from(productIds)
+    localStorage.setItem(key, JSON.stringify(productIdsArray))
+  } catch (error) {
+    console.error('localStorage 저장 실패:', error)
+  }
+}
+
 export default function ProductsListComponent() {
   const [activeTab, setActiveTab] = useState<'available' | 'closed'>('available')
   const [searchKeyword, setSearchKeyword] = useState<string>('')
   const [currentPage, setCurrentPage] = useState(1)
+  const { isAuthenticated } = useAuth()
+  const [pickedProductIds, setPickedProductIds] = useState<Set<string>>(new Set())
+
+  // 로그인된 사용자 정보 가져오기
+  const { data: userData } = useQuery<FetchUserLoggedInQuery, FetchUserLoggedInQueryVariables>(
+    FetchUserLoggedInDocument,
+    {
+      skip: !isAuthenticated, // 로그인되지 않았으면 쿼리 실행 안 함
+    }
+  )
+
+  const currentUser = userData?.fetchUserLoggedIn
+  const userId = currentUser?._id || null
 
   const { products, loading, error, refetch } = useProductsListBinding({
     // 예약 가능 숙소: isSoldout = false
@@ -72,6 +120,104 @@ export default function ProductsListComponent() {
     page: currentPage,
   })
   const { onClickProduct, onClickNewProduct } = useLinkRouting()
+  const { onClickToggle: originalOnClickToggle } = useToggleTravelproductPick({
+    refetch,
+    isSoldout: activeTab === 'closed' ? true : false,
+    search: searchKeyword || undefined,
+    page: currentPage,
+  })
+
+  // products가 로드된 후 localStorage에서 토글 상태 로드 및 동기화
+  useEffect(() => {
+    if (isAuthenticated && userId && products.length > 0) {
+      const storedPickedProducts = getPickedProductsFromStorage(userId)
+      // 현재 화면에 표시된 products 중에서 localStorage에 저장된 상품들만 필터링
+      const currentProductIds = new Set(products.map((p) => p._id))
+      const validPickedProducts = new Set(
+        Array.from(storedPickedProducts).filter((id) => currentProductIds.has(id))
+      )
+
+      console.log('초기 토글 상태 로드 (products 로드 후):', Array.from(validPickedProducts))
+      console.log('전체 저장된 토글 상태:', Array.from(storedPickedProducts))
+      console.log('현재 화면의 products:', Array.from(currentProductIds))
+
+      // 현재 상태와 다를 때만 업데이트 (무한 루프 방지)
+      setPickedProductIds((prev) => {
+        const prevArray = Array.from(prev).sort()
+        const newArray = Array.from(validPickedProducts).sort()
+        if (
+          prevArray.length !== newArray.length ||
+          prevArray.some((id, idx) => id !== newArray[idx])
+        ) {
+          return validPickedProducts
+        }
+        return prev
+      })
+    } else if (!isAuthenticated || !userId) {
+      // 로그인되지 않은 경우 빈 Set으로 초기화
+      setPickedProductIds(new Set())
+    }
+  }, [products, isAuthenticated, userId])
+
+  // 토글 핸들러 래핑: 토글된 상품 ID를 상태에 추가하고 localStorage에 저장
+  const handleToggle = async (event: React.MouseEvent<HTMLDivElement>, productId: string) => {
+    event.stopPropagation() // 카드 클릭 이벤트 방지 (페이지 이동 방지)
+
+    // 디버깅: 인증 상태 확인
+    console.log(
+      '토글 시도 - isAuthenticated:',
+      isAuthenticated,
+      'currentUser:',
+      currentUser,
+      'userId:',
+      userId
+    )
+
+    // 로그인되지 않은 사용자는 토글 불가
+    if (!isAuthenticated || !userId) {
+      console.log('토글 불가: 로그인되지 않음', { isAuthenticated, userId })
+      return
+    }
+
+    // 토글 전 pickedCount 저장
+    const productBeforeToggle = products.find((p) => p._id === productId)
+    const pickedCountBefore = productBeforeToggle?.pickedCount || 0
+    console.log('토글 전 pickedCount:', pickedCountBefore)
+
+    try {
+      const result = await originalOnClickToggle(event, productId)
+      console.log('토글 결과:', result)
+
+      // 토글 성공 시 상태 업데이트
+      if (result && result.success && result.newPickedCount !== null) {
+        const newPickedCount = result.newPickedCount
+        console.log('토글 후 pickedCount:', newPickedCount, '(이전:', pickedCountBefore, ')')
+
+        setPickedProductIds((prev) => {
+          const newSet = new Set(prev)
+
+          // pickedCount가 증가했으면 pick한 것 (아이콘 채움)
+          // pickedCount가 감소했으면 unpick한 것 (아이콘 비움)
+          if (newPickedCount > pickedCountBefore) {
+            newSet.add(productId)
+            console.log('토글: pick됨 (아이콘 채움)', productId)
+          } else if (newPickedCount < pickedCountBefore) {
+            newSet.delete(productId)
+            console.log('토글: unpick됨 (아이콘 비움)', productId)
+          }
+          // 같으면 변화 없음 (이미 올바른 상태)
+
+          savePickedProductsToStorage(userId, newSet)
+          console.log('localStorage 저장됨:', Array.from(newSet))
+          return newSet
+        })
+      } else {
+        console.log('토글 실패 또는 결과 없음')
+      }
+    } catch (error) {
+      console.error('토글 처리 중 오류:', error)
+    }
+  }
 
   // 탭이나 검색어 변경 시 페이지를 1로 리셋
   useEffect(() => {
@@ -234,55 +380,61 @@ export default function ProductsListComponent() {
                 className={styles.card}
                 onClick={(e) => onClickProduct(e, product._id)}
               >
-                  {/* 이미지 영역 */}
-                  <div className={styles.cardImageWrapper}>
-                    <Image
-                      src={getImageUrl(product.images?.[0])}
-                      alt={product.name || '숙소 이미지'}
-                      width={296}
-                      height={296}
-                      className={styles.cardImage}
-                    />
-                    <div className={styles.cardBookmark}>
+                {/* 이미지 영역 */}
+                <div className={styles.cardImageWrapper}>
+                  <Image
+                    src={getImageUrl(product.images?.[0])}
+                    alt={product.name || '숙소 이미지'}
+                    width={296}
+                    height={296}
+                    className={styles.cardImage}
+                  />
+                  <div
+                    className={styles.cardBookmark}
+                    onClick={(e) => {
+                      handleToggle(e, product._id)
+                      console.log('토글 훅: 토글 클릭')
+                    }}
+                  >
+                    {isAuthenticated && userId && pickedProductIds.has(product._id) ? (
+                      <Bookmark className={styles.bookmarkIcon} />
+                    ) : (
                       <BookmarkBorder className={styles.bookmarkIcon} />
-                      <span className={styles.bookmarkCount}>{product.pickedCount || 0}</span>
-                    </div>
+                    )}
+                    <span className={styles.bookmarkCount}>{product.pickedCount || 0}</span>
                   </div>
-                  {/* 콘텐츠 영역 */}
-                  <div className={styles.cardContent}>
-                    {/* 제목과 설명 */}
-                    <div className={styles.cardTitleSection}>
-                      <div className={styles.cardTitle}>{product.name}</div>
-                      <div className={styles.cardDescription}>{product.contents}</div>
+                </div>
+                {/* 콘텐츠 영역 */}
+                <div className={styles.cardContent}>
+                  {/* 제목과 설명 */}
+                  <div className={styles.cardTitleSection}>
+                    <div className={styles.cardTitle}>{product.name}</div>
+                    <div className={styles.cardDescription}>{product.contents}</div>
+                  </div>
+                  {/* 태그 */}
+                  {product.tags && product.tags.length > 0 ? (
+                    <div className={styles.cardTags}>
+                      {product.tags.map((tag) => `#${tag}`).join(' ')}
                     </div>
-                    {/* 태그 */}
-                    {product.tags && product.tags.length > 0 ? (
-                      <div className={styles.cardTags}>
-                        {product.tags.map((tag) => `#${tag}`).join(' ')}
+                  ) : null}
+                  {/* 프로필과 가격 */}
+                  <div className={styles.cardFooter}>
+                    <div className={styles.cardProfile}>
+                      <Image
+                        src={getProfileImageUrl(product.seller?.picture)}
+                        alt={product.seller?.name || '프로필 이미지'}
+                        width={24}
+                        height={24}
+                        className={styles.profileImage}
+                      />
+                      <span className={styles.profileName}>{product.seller?.name || '판매자'}</span>
+                    </div>
+                    {product.price && (
+                      <div className={styles.cardPrice}>
+                        <span className={styles.priceAmount}>{product.price.toLocaleString()}</span>
+                        <span className={styles.priceUnit}>원</span>
                       </div>
-                    ) : null}
-                    {/* 프로필과 가격 */}
-                    <div className={styles.cardFooter}>
-                      <div className={styles.cardProfile}>
-                        <Image
-                          src={getProfileImageUrl(product.seller?.picture)}
-                          alt={product.seller?.name || '프로필 이미지'}
-                          width={24}
-                          height={24}
-                          className={styles.profileImage}
-                        />
-                        <span className={styles.profileName}>
-                          {product.seller?.name || '판매자'}
-                        </span>
-                      </div>
-                      {product.price && (
-                        <div className={styles.cardPrice}>
-                          <span className={styles.priceAmount}>
-                            {product.price.toLocaleString()}
-                          </span>
-                          <span className={styles.priceUnit}>원</span>
-                        </div>
-                      )}
+                    )}
                   </div>
                 </div>
               </div>

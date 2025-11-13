@@ -33,3 +33,9 @@ export const FETCH_TRAVEL_PRODUCTS = gql`
     }
   }
 `
+
+export const TOGGLE_TRAVEL_PRODUCT_PICK = gql`
+  mutation toggleTravelproductPick($travelproductId: ID!) {
+    toggleTravelproductPick(travelproductId: $travelproductId)
+  }
+`

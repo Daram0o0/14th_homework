@@ -32,6 +32,7 @@ type Documents = {
     "\n  mutation dislikeBoard($boardId: ID!) {\n    dislikeBoard(boardId: $boardId)\n  }\n": typeof types.DislikeBoardDocument,
     "\n  query fetchTravelproductsOfTheBest {\n    fetchTravelproductsOfTheBest {\n      _id\n      name\n      contents\n      images\n      pickedCount\n      price\n    }\n  }\n": typeof types.FetchTravelproductsOfTheBestDocument,
     "\n  query fetchTravelproducts($isSoldout: Boolean, $search: String, $page: Int) {\n    fetchTravelproducts(isSoldout: $isSoldout, search: $search, page: $page) {\n      _id\n      name\n      contents\n      images\n      pickedCount\n      price\n      tags\n      seller {\n        _id\n        name\n        picture\n      }\n      soldAt\n      createdAt\n    }\n  }\n": typeof types.FetchTravelproductsDocument,
+    "\n  mutation toggleTravelproductPick($travelproductId: ID!) {\n    toggleTravelproductPick(travelproductId: $travelproductId)\n  }\n": typeof types.ToggleTravelproductPickDocument,
 };
 const documents: Documents = {
     "\n  mutation uploadFile($file: Upload!) {\n    uploadFile(file: $file) {\n      url\n    }\n  }\n": types.UploadFileDocument,
@@ -52,6 +53,7 @@ const documents: Documents = {
     "\n  mutation dislikeBoard($boardId: ID!) {\n    dislikeBoard(boardId: $boardId)\n  }\n": types.DislikeBoardDocument,
     "\n  query fetchTravelproductsOfTheBest {\n    fetchTravelproductsOfTheBest {\n      _id\n      name\n      contents\n      images\n      pickedCount\n      price\n    }\n  }\n": types.FetchTravelproductsOfTheBestDocument,
     "\n  query fetchTravelproducts($isSoldout: Boolean, $search: String, $page: Int) {\n    fetchTravelproducts(isSoldout: $isSoldout, search: $search, page: $page) {\n      _id\n      name\n      contents\n      images\n      pickedCount\n      price\n      tags\n      seller {\n        _id\n        name\n        picture\n      }\n      soldAt\n      createdAt\n    }\n  }\n": types.FetchTravelproductsDocument,
+    "\n  mutation toggleTravelproductPick($travelproductId: ID!) {\n    toggleTravelproductPick(travelproductId: $travelproductId)\n  }\n": types.ToggleTravelproductPickDocument,
 };
 
 /**
@@ -140,6 +142,10 @@ export function graphql(source: "\n  query fetchTravelproductsOfTheBest {\n    f
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query fetchTravelproducts($isSoldout: Boolean, $search: String, $page: Int) {\n    fetchTravelproducts(isSoldout: $isSoldout, search: $search, page: $page) {\n      _id\n      name\n      contents\n      images\n      pickedCount\n      price\n      tags\n      seller {\n        _id\n        name\n        picture\n      }\n      soldAt\n      createdAt\n    }\n  }\n"): (typeof documents)["\n  query fetchTravelproducts($isSoldout: Boolean, $search: String, $page: Int) {\n    fetchTravelproducts(isSoldout: $isSoldout, search: $search, page: $page) {\n      _id\n      name\n      contents\n      images\n      pickedCount\n      price\n      tags\n      seller {\n        _id\n        name\n        picture\n      }\n      soldAt\n      createdAt\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation toggleTravelproductPick($travelproductId: ID!) {\n    toggleTravelproductPick(travelproductId: $travelproductId)\n  }\n"): (typeof documents)["\n  mutation toggleTravelproductPick($travelproductId: ID!) {\n    toggleTravelproductPick(travelproductId: $travelproductId)\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

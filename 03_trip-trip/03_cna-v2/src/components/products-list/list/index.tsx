@@ -18,7 +18,8 @@ import {
   BorderColorOutlined,
 } from '@mui/icons-material'
 import { Button } from '@commons/ui'
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
+import { useProductsListContext } from '../context/products-list.context'
 import Image from 'next/image'
 import cheongsanImage from '@assets/cheongsan.png'
 import profileImage from '@assets/profile_image.png'
@@ -31,6 +32,9 @@ import {
   FetchUserLoggedInDocument,
   FetchUserLoggedInQuery,
   FetchUserLoggedInQueryVariables,
+  FetchTravelproductsIPickedDocument,
+  FetchTravelproductsIPickedQuery,
+  FetchTravelproductsIPickedQueryVariables,
 } from 'commons/graphql/graphql'
 import Pagination from '../pagination'
 
@@ -68,38 +72,20 @@ const getProfileImageUrl = (imageUrl: string | null | undefined): string | typeo
   return `https://storage.googleapis.com/${imageUrl}`
 }
 
-// localStorage에서 사용자별 토글 상태를 가져오는 함수
-const getPickedProductsFromStorage = (userId: string | null): Set<string> => {
-  if (typeof window === 'undefined' || !userId) return new Set()
-  try {
-    const key = `pickedProducts_${userId}`
-    const stored = localStorage.getItem(key)
-    if (!stored) return new Set()
-    const productIds = JSON.parse(stored) as string[]
-    return new Set(productIds)
-  } catch {
-    return new Set()
-  }
-}
-
-// localStorage에 사용자별 토글 상태를 저장하는 함수
-const savePickedProductsToStorage = (userId: string | null, productIds: Set<string>) => {
-  if (typeof window === 'undefined' || !userId) return
-  try {
-    const key = `pickedProducts_${userId}`
-    const productIdsArray = Array.from(productIds)
-    localStorage.setItem(key, JSON.stringify(productIdsArray))
-  } catch (error) {
-    console.error('localStorage 저장 실패:', error)
-  }
-}
-
 export default function ProductsListComponent() {
-  const [activeTab, setActiveTab] = useState<'available' | 'closed'>('available')
-  const [searchKeyword, setSearchKeyword] = useState<string>('')
-  const [currentPage, setCurrentPage] = useState(1)
+  const {
+    activeTab,
+    searchKeyword,
+    currentPage,
+    pickedProductIds,
+    setActiveTab,
+    setSearchKeyword,
+    setCurrentPage,
+    setPickedCountSum,
+    setPickedProductIds,
+    togglePickedProduct,
+  } = useProductsListContext()
   const { isAuthenticated } = useAuth()
-  const [pickedProductIds, setPickedProductIds] = useState<Set<string>>(new Set())
 
   // 로그인된 사용자 정보 가져오기
   const { data: userData } = useQuery<FetchUserLoggedInQuery, FetchUserLoggedInQueryVariables>(
@@ -111,6 +97,14 @@ export default function ProductsListComponent() {
 
   const currentUser = userData?.fetchUserLoggedIn
   const userId = currentUser?._id || null
+
+  // 로그인된 사용자가 pick한 상품 목록 가져오기
+  const { data: pickedProductsData } = useQuery<
+    FetchTravelproductsIPickedQuery,
+    FetchTravelproductsIPickedQueryVariables
+  >(FetchTravelproductsIPickedDocument, {
+    skip: !isAuthenticated, // 로그인되지 않았으면 쿼리 실행 안 함
+  })
 
   const { products, loading, error, refetch } = useProductsListBinding({
     // 예약 가능 숙소: isSoldout = false
@@ -127,39 +121,29 @@ export default function ProductsListComponent() {
     page: currentPage,
   })
 
-  // products가 로드된 후 localStorage에서 토글 상태 로드 및 동기화
+  // products가 로드된 후 로그인된 사용자가 pick한 상품 목록과 동기화
   useEffect(() => {
-    if (isAuthenticated && userId && products.length > 0) {
-      const storedPickedProducts = getPickedProductsFromStorage(userId)
-      // 현재 화면에 표시된 products 중에서 localStorage에 저장된 상품들만 필터링
-      const currentProductIds = new Set(products.map((p) => p._id))
-      const validPickedProducts = new Set(
-        Array.from(storedPickedProducts).filter((id) => currentProductIds.has(id))
+    if (isAuthenticated && pickedProductsData?.fetchTravelproductsIPicked && products.length > 0) {
+      // 사용자가 pick한 모든 상품 ID 목록
+      const allPickedProductIds = new Set(
+        pickedProductsData.fetchTravelproductsIPicked.map((product) => product._id)
       )
 
-      console.log('초기 토글 상태 로드 (products 로드 후):', Array.from(validPickedProducts))
-      console.log('전체 저장된 토글 상태:', Array.from(storedPickedProducts))
-      console.log('현재 화면의 products:', Array.from(currentProductIds))
+      // 현재 화면에 표시된 products 중에서 사용자가 pick한 상품만 필터링
+      const currentProductIds = new Set(products.map((p) => p._id))
+      const validPickedProducts = new Set(
+        Array.from(allPickedProductIds).filter((id) => currentProductIds.has(id))
+      )
 
-      // 현재 상태와 다를 때만 업데이트 (무한 루프 방지)
-      setPickedProductIds((prev) => {
-        const prevArray = Array.from(prev).sort()
-        const newArray = Array.from(validPickedProducts).sort()
-        if (
-          prevArray.length !== newArray.length ||
-          prevArray.some((id, idx) => id !== newArray[idx])
-        ) {
-          return validPickedProducts
-        }
-        return prev
-      })
-    } else if (!isAuthenticated || !userId) {
+      // Context의 pickedProductIds 업데이트
+      setPickedProductIds(validPickedProducts)
+    } else if (!isAuthenticated) {
       // 로그인되지 않은 경우 빈 Set으로 초기화
       setPickedProductIds(new Set())
     }
-  }, [products, isAuthenticated, userId])
+  }, [products, isAuthenticated, pickedProductsData, setPickedProductIds])
 
-  // 토글 핸들러 래핑: 토글된 상품 ID를 상태에 추가하고 localStorage에 저장
+  // 토글 핸들러 래핑: 토글된 상품 ID를 상태에 추가 (Apollo Client 캐시 사용)
   const handleToggle = async (event: React.MouseEvent<HTMLDivElement>, productId: string) => {
     event.stopPropagation() // 카드 클릭 이벤트 방지 (페이지 이동 방지)
 
@@ -188,29 +172,21 @@ export default function ProductsListComponent() {
       const result = await originalOnClickToggle(event, productId)
       console.log('토글 결과:', result)
 
-      // 토글 성공 시 상태 업데이트
+      // 토글 성공 시 상태 업데이트 (Apollo Client 캐시는 이미 업데이트됨)
       if (result && result.success && result.newPickedCount !== null) {
         const newPickedCount = result.newPickedCount
         console.log('토글 후 pickedCount:', newPickedCount, '(이전:', pickedCountBefore, ')')
 
-        setPickedProductIds((prev) => {
-          const newSet = new Set(prev)
-
-          // pickedCount가 증가했으면 pick한 것 (아이콘 채움)
-          // pickedCount가 감소했으면 unpick한 것 (아이콘 비움)
-          if (newPickedCount > pickedCountBefore) {
-            newSet.add(productId)
-            console.log('토글: pick됨 (아이콘 채움)', productId)
-          } else if (newPickedCount < pickedCountBefore) {
-            newSet.delete(productId)
-            console.log('토글: unpick됨 (아이콘 비움)', productId)
-          }
-          // 같으면 변화 없음 (이미 올바른 상태)
-
-          savePickedProductsToStorage(userId, newSet)
-          console.log('localStorage 저장됨:', Array.from(newSet))
-          return newSet
-        })
+        // pickedCount가 증가했으면 pick한 것 (아이콘 채움)
+        // pickedCount가 감소했으면 unpick한 것 (아이콘 비움)
+        if (newPickedCount > pickedCountBefore) {
+          togglePickedProduct(productId, true)
+          console.log('토글: pick됨 (아이콘 채움)', productId)
+        } else if (newPickedCount < pickedCountBefore) {
+          togglePickedProduct(productId, false)
+          console.log('토글: unpick됨 (아이콘 비움)', productId)
+        }
+        // 같으면 변화 없음 (이미 올바른 상태)
       } else {
         console.log('토글 실패 또는 결과 없음')
       }
@@ -222,7 +198,13 @@ export default function ProductsListComponent() {
   // 탭이나 검색어 변경 시 페이지를 1로 리셋
   useEffect(() => {
     setCurrentPage(1)
-  }, [activeTab, searchKeyword])
+  }, [activeTab, searchKeyword, setCurrentPage])
+
+  // products의 pickedCount 합계를 계산하여 context에 저장 (carousel 리패치 트리거용)
+  useEffect(() => {
+    const sum = products.reduce((acc, product) => acc + (product.pickedCount || 0), 0)
+    setPickedCountSum(sum)
+  }, [products, setPickedCountSum])
 
   // lastPage 계산
   // 현재 페이지의 아이템 수가 ITEMS_PER_PAGE보다 작으면 마지막 페이지로 간주

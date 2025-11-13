@@ -4,17 +4,13 @@ import {
   ToggleTravelproductPickDocument,
   ToggleTravelproductPickMutation,
   ToggleTravelproductPickMutationVariables,
-  FetchTravelproductsDocument,
   FetchTravelproductsOfTheBestDocument,
   FetchTravelproductsOfTheBestQuery,
-  FetchTravelproductsQuery,
+  FetchTravelproductsDocument,
 } from 'commons/graphql/graphql'
 
 interface UseToggleTravelproductPickProps {
   refetch: () => void
-  isSoldout?: boolean
-  search?: string
-  page?: number
 }
 
 export default function useToggleTravelproductPick(props: UseToggleTravelproductPickProps) {
@@ -44,55 +40,6 @@ export default function useToggleTravelproductPick(props: UseToggleTravelproduct
 
           const newPickedCount = data.toggleTravelproductPick
 
-          // fetchTravelproducts 쿼리 캐시 업데이트 (모든 변수 조합)
-          try {
-            cache.modify({
-              id: cache.identify({
-                __typename: 'Travelproduct',
-                _id: travelproductId,
-              }),
-              fields: {
-                pickedCount() {
-                  return newPickedCount
-                },
-              },
-            })
-          } catch (error) {
-            console.error('캐시 업데이트 실패:', error)
-          }
-
-          // fetchTravelproducts 쿼리 캐시 업데이트 (현재 변수)
-          try {
-            const existingData = cache.readQuery<FetchTravelproductsQuery>({
-              query: FetchTravelproductsDocument,
-              variables: {
-                isSoldout: props.isSoldout,
-                search: props.search,
-                page: props.page,
-              },
-            })
-
-            if (existingData) {
-              cache.writeQuery({
-                query: FetchTravelproductsDocument,
-                variables: {
-                  isSoldout: props.isSoldout,
-                  search: props.search,
-                  page: props.page,
-                },
-                data: {
-                  fetchTravelproducts: existingData.fetchTravelproducts.map((product) =>
-                    product._id === travelproductId
-                      ? { ...product, pickedCount: newPickedCount }
-                      : product
-                  ),
-                },
-              })
-            }
-          } catch (error) {
-            console.error('fetchTravelproducts 캐시 업데이트 실패:', error)
-          }
-
           // fetchTravelproductsOfTheBest 쿼리 캐시 업데이트
           try {
             const existingBestData = cache.readQuery<FetchTravelproductsOfTheBestQuery>({
@@ -115,18 +62,30 @@ export default function useToggleTravelproductPick(props: UseToggleTravelproduct
           } catch (error) {
             console.error('fetchTravelproductsOfTheBest 캐시 업데이트 실패:', error)
           }
+
+          // fetchTravelproducts 쿼리 캐시 업데이트 (모든 변수 조합)
+          try {
+            cache.modify({
+              id: cache.identify({
+                __typename: 'Travelproduct',
+                _id: travelproductId,
+              }),
+              fields: {
+                pickedCount() {
+                  return newPickedCount
+                },
+              },
+            })
+          } catch (error) {
+            console.error('캐시 업데이트 실패:', error)
+          }
         },
         refetchQueries: [
           {
-            query: FetchTravelproductsDocument,
-            variables: {
-              isSoldout: props.isSoldout,
-              search: props.search,
-              page: props.page,
-            },
+            query: FetchTravelproductsOfTheBestDocument,
           },
           {
-            query: FetchTravelproductsOfTheBestDocument,
+            query: FetchTravelproductsDocument,
           },
         ],
       })
@@ -152,3 +111,4 @@ export default function useToggleTravelproductPick(props: UseToggleTravelproduct
     isToggling: loading,
   }
 }
+

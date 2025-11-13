@@ -3,19 +3,119 @@
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation, Autoplay } from 'swiper/modules'
 import type { Swiper as SwiperType } from 'swiper'
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import styles from './styles.module.css'
 import useCarouselBinding from './hooks/index.binding.hook'
 import useLinkRouting from './hooks/index.link.routing.hook'
+import useToggleTravelproductPick from './hooks/index.toggle.hook'
+import { useAuth } from 'commons/providers/auth/auth.provider'
+import { useQuery } from '@apollo/client'
+import {
+  FetchTravelproductsIPickedDocument,
+  FetchTravelproductsIPickedQuery,
+  FetchTravelproductsIPickedQueryVariables,
+} from 'commons/graphql/graphql'
+import { Bookmark, BookmarkBorder } from '@mui/icons-material'
 import Image from 'next/image'
 import cheongsanImage from '@assets/cheongsan.png'
+import { useProductsListContext } from '../context/products-list.context'
 
 export default function Carousel() {
-  const { products, loading, error } = useCarouselBinding()
+  const { products, loading, error, refetch } = useCarouselBinding()
   const { onClickProduct } = useLinkRouting()
+  const { isAuthenticated } = useAuth()
+  const { pickedProductIds, setPickedProductIds, setPickedCountSum, togglePickedProduct } =
+    useProductsListContext()
   const swiperRef = useRef<SwiperType | null>(null)
+
+  const { onClickToggle: originalOnClickToggle } = useToggleTravelproductPick({
+    refetch,
+  })
+
+  // 로그인된 사용자가 pick한 상품 목록 가져오기
+  const { data: pickedProductsData } = useQuery<
+    FetchTravelproductsIPickedQuery,
+    FetchTravelproductsIPickedQueryVariables
+  >(FetchTravelproductsIPickedDocument, {
+    skip: !isAuthenticated, // 로그인되지 않았으면 쿼리 실행 안 함
+  })
+
+  // products가 로드된 후 로그인된 사용자가 pick한 상품 목록과 동기화
+  useEffect(() => {
+    if (isAuthenticated && pickedProductsData?.fetchTravelproductsIPicked && products.length > 0) {
+      // 사용자가 pick한 모든 상품 ID 목록
+      const allPickedProductIds = new Set(
+        pickedProductsData.fetchTravelproductsIPicked.map((product) => product._id)
+      )
+
+      // 현재 화면에 표시된 products 중에서 사용자가 pick한 상품만 필터링
+      const currentProductIds = new Set(products.map((p) => p._id))
+      const validPickedProducts = new Set(
+        Array.from(allPickedProductIds).filter((id) => currentProductIds.has(id))
+      )
+
+      // Context의 pickedProductIds 업데이트 (기존 값과 병합)
+      setPickedProductIds((prev) => {
+        const merged = new Set([...Array.from(prev), ...Array.from(validPickedProducts)])
+        return merged
+      })
+    } else if (!isAuthenticated) {
+      // 로그인되지 않은 경우 빈 Set으로 초기화하지 않음 (list에서 관리)
+    }
+  }, [products, isAuthenticated, pickedProductsData, setPickedProductIds])
+
+  // products의 pickedCount 합계를 계산하여 context에 저장 (list 리패치 트리거용)
+  useEffect(() => {
+    const sum = products.reduce((acc, product) => acc + (product.pickedCount || 0), 0)
+    setPickedCountSum(sum)
+  }, [products, setPickedCountSum])
+
+  // 토글 핸들러 래핑: 토글된 상품 ID를 상태에 추가 (Apollo Client 캐시 사용)
+  const handleToggle = async (event: React.MouseEvent<HTMLDivElement>, productId: string) => {
+    event.stopPropagation() // 카드 클릭 이벤트 방지 (페이지 이동 방지)
+
+    // 디버깅: 인증 상태 확인
+    console.log('토글 시도 - isAuthenticated:', isAuthenticated)
+
+    // 로그인되지 않은 사용자는 토글 불가
+    if (!isAuthenticated) {
+      console.log('토글 불가: 로그인되지 않음', { isAuthenticated })
+      return
+    }
+
+    // 토글 전 pickedCount 저장
+    const productBeforeToggle = products.find((p) => p._id === productId)
+    const pickedCountBefore = productBeforeToggle?.pickedCount || 0
+    console.log('토글 전 pickedCount:', pickedCountBefore)
+
+    try {
+      const result = await originalOnClickToggle(event, productId)
+      console.log('토글 결과:', result)
+
+      // 토글 성공 시 상태 업데이트 (Apollo Client 캐시는 이미 업데이트됨)
+      if (result && result.success && result.newPickedCount !== null) {
+        const newPickedCount = result.newPickedCount
+        console.log('토글 후 pickedCount:', newPickedCount, '(이전:', pickedCountBefore, ')')
+
+        // pickedCount가 증가했으면 pick한 것 (아이콘 채움)
+        // pickedCount가 감소했으면 unpick한 것 (아이콘 비움)
+        if (newPickedCount > pickedCountBefore) {
+          togglePickedProduct(productId, true)
+          console.log('토글: pick됨 (아이콘 채움)', productId)
+        } else if (newPickedCount < pickedCountBefore) {
+          togglePickedProduct(productId, false)
+          console.log('토글: unpick됨 (아이콘 비움)', productId)
+        }
+        // 같으면 변화 없음 (이미 올바른 상태)
+      } else {
+        console.log('토글 실패 또는 결과 없음')
+      }
+    } catch (error) {
+      console.error('토글 처리 중 오류:', error)
+    }
+  }
 
   if (loading) {
     return (
@@ -119,23 +219,18 @@ export default function Carousel() {
                     )}
                     <div className={styles.gradientOverlay}></div>
                   </div>
-                <div className={styles.bookmarkButton}>
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className={styles.bookmarkIcon}
-                  >
-                    <path
-                      d="M19 21L12 16L5 21V5C5 4.46957 5.21071 3.96086 5.58579 3.58579C5.96086 3.21071 6.46957 3 7 3H17C17.5304 3 18.0391 3.21071 18.4142 3.58579C18.7893 3.96086 19 4.46957 19 5V21Z"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                <div
+                  className={styles.bookmarkButton}
+                  onClick={(e) => {
+                    handleToggle(e, product._id)
+                    console.log('토글 훅: 토글 클릭')
+                  }}
+                >
+                  {isAuthenticated && pickedProductIds.has(product._id) ? (
+                    <Bookmark className={styles.bookmarkIcon} />
+                  ) : (
+                    <BookmarkBorder className={styles.bookmarkIcon} />
+                  )}
                   <span className={styles.bookmarkCount}>{product.pickedCount ?? 0}</span>
                 </div>
                 <div className={styles.contentArea}>

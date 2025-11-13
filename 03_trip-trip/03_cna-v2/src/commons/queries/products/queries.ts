@@ -39,3 +39,11 @@ export const TOGGLE_TRAVEL_PRODUCT_PICK = gql`
     toggleTravelproductPick(travelproductId: $travelproductId)
   }
 `
+
+export const FETCH_TRAVEL_PRODUCTS_I_PICKED = gql`
+  query fetchTravelproductsIPicked {
+    fetchTravelproductsIPicked {
+      _id
+    }
+  }
+`

@@ -19,7 +19,7 @@ import {
 } from '@mui/icons-material'
 import { Button } from '@commons/ui'
 import { useEffect } from 'react'
-import { useProductsListContext } from '../context/products-list.context'
+
 import Image from 'next/image'
 import cheongsanImage from '@assets/cheongsan.png'
 import profileImage from '@assets/profile_image.png'
@@ -37,10 +37,11 @@ import {
   FetchTravelproductsIPickedQueryVariables,
 } from 'commons/graphql/graphql'
 import Pagination from '../pagination'
+import { useProductsListContext } from '../context/products-list.context'
 
 const { RangePicker } = DatePicker
 
-const ITEMS_PER_PAGE = 12
+const ITEMS_PER_PAGE = 10
 
 // 이미지 URL을 처리하는 유틸리티 함수
 const getImageUrl = (imageUrl: string | null | undefined): string | typeof cheongsanImage => {
@@ -208,9 +209,9 @@ export default function ProductsListComponent() {
 
   // lastPage 계산
   // 현재 페이지의 아이템 수가 ITEMS_PER_PAGE보다 작으면 마지막 페이지로 간주
-  // 실제로는 서버에서 총 개수를 받아와야 하지만, 현재는 이 방식으로 처리
+  // 그렇지 않으면 더 많은 페이지가 있다고 가정하여 충분히 큰 수로 설정
   const isLastPage = products.length < ITEMS_PER_PAGE && products.length > 0
-  const lastPage = isLastPage ? currentPage : currentPage + 1
+  const lastPage = isLastPage ? currentPage : Math.max(currentPage + 10, 50) // 더 많은 페이지가 있다고 가정
 
   return (
     <div className={styles.container}>
@@ -354,7 +355,7 @@ export default function ProductsListComponent() {
           ) : error ? (
             <div>에러가 발생했습니다: {error.message}</div>
           ) : products.length === 0 ? (
-            <div>상품이 없습니다.</div>
+            <div className={styles.emptyState}>상품이 없습니다.</div>
           ) : (
             products.map((product) => (
               <div
@@ -367,8 +368,8 @@ export default function ProductsListComponent() {
                   <Image
                     src={getImageUrl(product.images?.[0])}
                     alt={product.name || '숙소 이미지'}
-                    width={296}
-                    height={296}
+                    width={240}
+                    height={200}
                     className={styles.cardImage}
                   />
                   <div
@@ -394,11 +395,11 @@ export default function ProductsListComponent() {
                     <div className={styles.cardDescription}>{product.contents}</div>
                   </div>
                   {/* 태그 */}
-                  {product.tags && product.tags.length > 0 ? (
-                    <div className={styles.cardTags}>
-                      {product.tags.map((tag) => `#${tag}`).join(' ')}
-                    </div>
-                  ) : null}
+                  <div className={styles.cardTags}>
+                    {product.tags && product.tags.length > 0
+                      ? product.tags.map((tag) => `#${tag}`).join(' ')
+                      : ''}
+                  </div>
                   {/* 프로필과 가격 */}
                   <div className={styles.cardFooter}>
                     <div className={styles.cardProfile}>

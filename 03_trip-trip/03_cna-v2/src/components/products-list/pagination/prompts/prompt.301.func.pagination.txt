@@ -26,30 +26,34 @@
 
             1) 타입 정의
                 - PaginationProps: refetch, setCurrentPage, lastPage, currentPage
-                - PaginationHookProps: refetch, setCurrentPage, lastPage
+                - PaginationHookProps: refetch, setCurrentPage, lastPage, currentPage
                 - FetchTravelproductsQuery, FetchTravelproductsQueryVariables 사용
 
             2) Hook 기능
                 - usePagination hook 구현
                 - 페이지 그룹 크기: 5개
-                - startPage 상태 관리
-                - leftDisabled, rightDisabled 상태 관리
-                - onClickPrevPage: 이전 페이지 그룹으로 이동
-                - onClickNextPage: 다음 페이지 그룹으로 이동
+                - startPage 상태 관리 (현재 페이지 그룹의 시작 페이지)
+                - leftDisabled, rightDisabled 상태 관리 (현재 페이지 기준)
+                - onClickPrevPage: 현재 페이지에서 이전 페이지로 이동 (한 페이지씩)
+                - onClickNextPage: 현재 페이지에서 다음 페이지로 이동 (한 페이지씩)
                 - onClickPage: 특정 페이지로 이동
                 - 페이지 변경 시 refetch 호출하여 데이터 갱신
+                - 화살표 비활성화: leftDisabled = currentPage <= 1, rightDisabled = currentPage >= lastPage
 
             3) 컴포넌트 기능
                 - Pagination 컴포넌트 구현
                 - 좌우 화살표 아이콘 (KeyboardArrowLeft, KeyboardArrowRight)
                 - 페이지 번호 버튼 5개 표시 (startPage부터 시작)
                 - 현재 페이지 활성화 스타일 적용
-                - 비활성화된 화살표 스타일 적용
+                - 비활성화된 화살표 스타일 적용 및 클릭 이벤트 차단
+                - 빈 상태 처리: emptyState 클래스로 중앙 배치, min-height 400px
 
             4) 연동
                 - products-list/list/index.tsx에 pagination 컴포넌트 추가
                 - currentPage 상태 관리
                 - refetch 함수 전달
-                - lastPage 계산 (현재는 products.length 기반으로 계산)
+                - lastPage 계산 (백엔드 API는 10개씩 반환, products.length < 10이면 마지막 페이지)
                 - 탭이나 검색어 변경 시 currentPage를 1로 리셋
+                - ITEMS_PER_PAGE = 10으로 설정 (백엔드 API 스펙에 맞춤)
+                - UI 레이아웃: 5*2 그리드 구조 (5열 2행, 총 10개 카드)
 

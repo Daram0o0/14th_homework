@@ -1,50 +1,62 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { PaginationHookProps } from './types'
 
 export const usePagination = (props: PaginationHookProps) => {
-  const { refetch, setCurrentPage, lastPage } = props
+  const { refetch, setCurrentPage, lastPage, currentPage } = props
   const PAGE_GROUP_SIZE = 5
 
-  const [startPage, setStartPage] = useState(1)
-  const [leftDisabled, setLeftDisabled] = useState(true)
-  const [rightDisabled, setRightDisabled] = useState(false)
+  // currentPage를 기반으로 초기 startPage 계산
+  const initialStartPage = Math.floor((currentPage - 1) / PAGE_GROUP_SIZE) * PAGE_GROUP_SIZE + 1
+  const [startPage, setStartPage] = useState(initialStartPage)
+  const [leftDisabled, setLeftDisabled] = useState(currentPage <= 1)
+  const [rightDisabled, setRightDisabled] = useState(currentPage >= lastPage)
+
+  // currentPage가 변경될 때 startPage와 disabled 상태 업데이트
+  useEffect(() => {
+    const newStartPage = Math.floor((currentPage - 1) / PAGE_GROUP_SIZE) * PAGE_GROUP_SIZE + 1
+    setStartPage(newStartPage)
+    setLeftDisabled(currentPage <= 1)
+    setRightDisabled(currentPage >= lastPage)
+  }, [currentPage, lastPage, PAGE_GROUP_SIZE])
 
   const onClickPrevPage = () => {
-    if (startPage === 1) return
+    if (currentPage <= 1 || leftDisabled) return
 
-    const newStartPage = startPage - PAGE_GROUP_SIZE
-    setStartPage(newStartPage)
-
+    const newPage = currentPage - 1
     refetch({
-      page: newStartPage,
+      page: newPage,
     })
-    setCurrentPage(newStartPage)
+    setCurrentPage(newPage)
 
-    if (newStartPage <= 1) {
-      setLeftDisabled(true)
+    // startPage 업데이트 (필요한 경우)
+    const newStartPage = Math.floor((newPage - 1) / PAGE_GROUP_SIZE) * PAGE_GROUP_SIZE + 1
+    if (newStartPage !== startPage) {
+      setStartPage(newStartPage)
     }
-    if (newStartPage + PAGE_GROUP_SIZE <= lastPage) {
-      setRightDisabled(false)
-    }
+
+    // 상태 업데이트
+    setLeftDisabled(newPage <= 1)
+    setRightDisabled(newPage >= lastPage)
   }
 
   const onClickNextPage = () => {
-    if (startPage + PAGE_GROUP_SIZE > lastPage) return
+    if (currentPage >= lastPage || rightDisabled) return
 
-    const newStartPage = startPage + PAGE_GROUP_SIZE
-    setStartPage(newStartPage)
-
+    const newPage = currentPage + 1
     refetch({
-      page: newStartPage,
+      page: newPage,
     })
-    setCurrentPage(newStartPage)
+    setCurrentPage(newPage)
 
-    if (newStartPage >= 6) {
-      setLeftDisabled(false)
+    // startPage 업데이트 (필요한 경우)
+    const newStartPage = Math.floor((newPage - 1) / PAGE_GROUP_SIZE) * PAGE_GROUP_SIZE + 1
+    if (newStartPage !== startPage) {
+      setStartPage(newStartPage)
     }
-    if (newStartPage + PAGE_GROUP_SIZE > lastPage) {
-      setRightDisabled(true)
-    }
+
+    // 상태 업데이트
+    setLeftDisabled(newPage <= 1)
+    setRightDisabled(newPage >= lastPage)
   }
 
   const onClickPage = (page: number) => {
@@ -59,18 +71,9 @@ export const usePagination = (props: PaginationHookProps) => {
       setStartPage(groupStart)
     }
 
-    // 화살표 활성화 상태 업데이트
-    if (groupStart <= 1) {
-      setLeftDisabled(true)
-    } else {
-      setLeftDisabled(false)
-    }
-
-    if (groupStart + PAGE_GROUP_SIZE > lastPage) {
-      setRightDisabled(true)
-    } else {
-      setRightDisabled(false)
-    }
+    // 화살표 활성화 상태 업데이트 (현재 페이지 기준)
+    setLeftDisabled(page <= 1)
+    setRightDisabled(page >= lastPage)
   }
 
   return {

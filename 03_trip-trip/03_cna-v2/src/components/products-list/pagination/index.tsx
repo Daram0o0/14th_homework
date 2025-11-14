@@ -11,12 +11,13 @@ export default function Pagination(props: PaginationProps) {
       refetch,
       setCurrentPage,
       lastPage,
+      currentPage,
     })
 
   return (
     <div className={styles.pagination}>
       <KeyboardArrowLeft
-        onClick={onClickPrevPage}
+        onClick={leftDisabled ? undefined : onClickPrevPage}
         className={leftDisabled ? styles.isDisabled : undefined}
       />
       <nav className={styles.paginationNav}>
@@ -34,7 +35,7 @@ export default function Pagination(props: PaginationProps) {
         )}
       </nav>
       <KeyboardArrowRight
-        onClick={onClickNextPage}
+        onClick={rightDisabled ? undefined : onClickNextPage}
         className={rightDisabled ? styles.isDisabled : undefined}
       />
     </div>

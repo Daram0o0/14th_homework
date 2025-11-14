@@ -65,4 +65,3 @@ export function useProductsListContext() {
   }
   return context
 }
-

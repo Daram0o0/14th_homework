@@ -20,4 +20,5 @@ export interface PaginationHookProps {
   ) => Promise<ApolloQueryResult<FetchTravelproductsQuery>>
   setCurrentPage: Dispatch<SetStateAction<number>>
   lastPage: number
+  currentPage: number
 }
